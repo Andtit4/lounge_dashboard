@@ -7,10 +7,10 @@ module.exports = {
         autorestart: true,
         watch: false,
         max_memory_restart: '1G',
-        node_args: '--require crypto',
         env: {
             NODE_ENV: 'production',
             PORT: 6610,
+            NODE_OPTIONS: '--experimental-global-webcrypto'
         },
     }, ],
 }
