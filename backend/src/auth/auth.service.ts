@@ -47,6 +47,7 @@ export class AuthService {
         token,
         redirect,
       };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_error) {
       throw new UnauthorizedException('Identifiants invalides');
     }
@@ -57,7 +58,8 @@ export class AuthService {
       // Par défaut, les nouveaux utilisateurs ne sont pas administrateurs
       const userData = {
         ...createUserDto,
-        isAdmin: createUserDto.role === 'admin' || createUserDto.isAdmin === true,
+        isAdmin:
+          createUserDto.role === 'admin' || createUserDto.isAdmin === true,
         role: createUserDto.role || 'user',
       };
 

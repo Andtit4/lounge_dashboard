@@ -2,7 +2,8 @@ module.exports = {
     apps: [{
         name: 'lounge-api',
         cwd: './backend',
-        script: 'dist/main.js',
+        script: 'npm',
+        args: 'run start:dev',
         instances: 1,
         autorestart: true,
         watch: false,
@@ -10,7 +11,7 @@ module.exports = {
         env: {
             NODE_ENV: 'production',
             PORT: 6610,
-            NODE_OPTIONS: '--experimental-global-webcrypto'
+            NODE_OPTIONS: '--experimental-global-webcrypto',
         },
     }, ],
 }
