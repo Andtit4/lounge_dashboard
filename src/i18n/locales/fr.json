@@ -1,0 +1,172 @@
+{
+  "auth": {
+    "agree": "J'accepte",
+    "createAccount": "Créer un compte",
+    "createNewAccount": "Créer un nouveau compte",
+    "email": "Email",
+    "login": "Connexion",
+    "password": "Mot de passe",
+    "recover_password": "Récupérer le mot de passe",
+    "sign_up": "S'inscrire",
+    "keep_logged_in": "Rester connecté",
+    "termsOfUse": "Conditions d'utilisation.",
+    "reset_password": "Réinitialiser le mot de passe"
+  },
+  "404": {
+    "title": "Cette page est partie à la pêche.",
+    "text": "Si vous pensez que ce n'est pas normal, veuillez nous envoyer un message à ",
+    "back_button": "Retour au tableau de bord"
+  },
+  "typography": {
+    "primary": "Styles de texte primaires",
+    "secondary": "Styles de texte secondaires"
+  },
+  "dashboard": {
+    "versions": "Versions",
+    "setupRemoteConnections": "Configurer les connexions distantes",
+    "currentVisitors": "Visiteurs actuels",
+    "navigationLayout": "Disposition de navigation",
+    "topBarButton": "Barre supérieure",
+    "sideBarButton": "Barre latérale"
+  },
+  "language": {
+    "brazilian_portuguese": "Portugais",
+    "english": "Anglais",
+    "spanish": "Espagnol",
+    "simplified_chinese": "Chinois simplifié",
+    "persian": "Persan",
+    "french": "Français"
+  },
+  "menu": {
+    "auth": "Authentification",
+    "buttons": "Boutons",
+    "timelines": "Chronologies",
+    "dashboard": "Tableau de bord",
+    "billing": "Facturation",
+    "login": "Connexion",
+    "preferences": "Préférences du compte",
+    "payments": "Paiements",
+    "settings": "Paramètres de l'application",
+    "pricing-plans": "Plans tarifaires",
+    "payment-methods": "Méthodes de paiement",
+    "signup": "Inscription",
+    "recover-password": "Récupérer le mot de passe",
+    "recover-password-email": "Email de récupération de mot de passe",
+    "404": "404",
+    "faq": "FAQ",
+    "users": "Utilisateurs",
+    "projects": "Projets",
+    "users.list": "Liste des utilisateurs",
+    "users.management": "Gestion des utilisateurs",
+    "subscription-history": "Historique des abonnements",
+    "lounges-management": "Gestion des Salons",
+    "lounges.list": "Liste des salons",
+    "lounges.create": "Ajouter un salon",
+    "lounges.analytics": "Statistiques",
+    "admin-bookings": "Gestion des réservations",
+    "lounges": "Liste des Salons",
+    "bookings": "Mes Réservations"
+  },
+  "messages": {
+    "all": "Voir tous les messages",
+    "new": "Nouveaux messages de {name}",
+    "mark_as_read": "Marquer comme lu"
+  },
+  "navbar": {
+    "messageUs": "Questions de développement web :",
+    "repository": "Dépôt GitHub"
+  },
+  "notifications": {
+    "all": "Voir toutes les notifications",
+    "less": "Voir moins de notifications",
+    "mark_as_read": "Marquer comme lu",
+    "sentMessage": "vous a envoyé un message",
+    "uploadedZip": "a téléchargé un nouveau fichier Zip avec {type}",
+    "startedTopic": "a commencé un nouveau sujet"
+  },
+  "user": {
+    "language": "Changer de langue",
+    "logout": "Déconnexion",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "billing": "Facturation",
+    "faq": "FAQ",
+    "helpAndSupport": "Aide & support",
+    "projects": "Projets",
+    "account": "Compte",
+    "explore": "Explorer"
+  },
+  "treeView": {
+    "basic": "Basique",
+    "icons": "Icônes",
+    "selectable": "Sélectionnable",
+    "editable": "Éditable",
+    "advanced": "Avancé"
+  },
+  "chat": {
+    "title": "Discussion",
+    "sendButton": "Envoyer"
+  },
+  "spacingPlayground": {
+    "value": "Valeur",
+    "margin": "Marge",
+    "padding": "Remplissage"
+  },
+  "spacing": {
+    "title": "Espacement"
+  },
+  "vuestic": {
+    "search": "Rechercher",
+    "noOptions": "Aucun élément trouvé",
+    "ok": "OK",
+    "cancel": "Annuler",
+    "uploadFile": "Télécharger un fichier",
+    "undo": "Annuler",
+    "dropzone": "Déposez les fichiers ici pour les télécharger",
+    "fileDeleted": "Fichier supprimé",
+    "closeAlert": "fermer l'alerte",
+    "backToTop": "retour en haut",
+    "toggleDropdown": "basculer le menu déroulant",
+    "carousel": "carrousel",
+    "goPreviousSlide": "aller à la diapositive précédente",
+    "goNextSlide": "aller à la diapositive suivante",
+    "goSlide": "aller à la diapositive {index}",
+    "slideOf": "diapositive {index} sur {length}",
+    "close": "fermer",
+    "openColorPicker": "ouvrir le sélecteur de couleur",
+    "colorSelection": "sélection de couleur",
+    "colorName": "couleur {color}",
+    "decreaseCounter": "diminuer le compteur",
+    "increaseCounter": "augmenter le compteur",
+    "selectAllRows": "sélectionner toutes les lignes",
+    "sortColumnBy": "trier la colonne par {name}",
+    "selectRowByIndex": "sélectionner la ligne {index}",
+    "resetDate": "réinitialiser la date",
+    "nextPeriod": "période suivante",
+    "switchView": "changer de vue",
+    "previousPeriod": "période précédente",
+    "removeFile": "supprimer le fichier",
+    "reset": "réinitialiser",
+    "pagination": "pagination",
+    "goToTheFirstPage": "aller à la première page",
+    "goToPreviousPage": "aller à la page précédente",
+    "goToSpecificPage": "aller à la page {page}",
+    "goToSpecificPageInput": "entrez le numéro de page",
+    "goNextPage": "aller à la page suivante",
+    "goLastPage": "aller à la dernière page",
+    "currentRating": "note actuelle {value} sur {max}",
+    "voteRating": "voter {value} sur {max}",
+    "optionsFilter": "filtre d'options",
+    "splitPanels": "panneaux divisés",
+    "movePaginationLeft": "déplacer la pagination à gauche",
+    "movePaginationRight": "déplacer la pagination à droite",
+    "resetTime": "réinitialiser l'heure",
+    "closeToast": "fermer la notification",
+    "selectedOption": "Option sélectionnée",
+    "noSelectedOption": "Aucune option sélectionnée",
+    "breadcrumbs": "fil d'Ariane",
+    "counterValue": "valeur du compteur",
+    "selectedDate": "date sélectionnée",
+    "selectedTime": "heure sélectionnée"
+  }
+}
