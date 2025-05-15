@@ -89,7 +89,7 @@ export function useUserManagement(autoLoad = true) {
 
     try {
       // Sanitiser les données avant envoi
-      const sanitizedData = sanitizeUserData(userData)
+      const sanitizedData = sanitizeUserData(userData) as ICreateUserDto
       const newUser = await UserService.createUser(sanitizedData)
       users.value.push(newUser)
 

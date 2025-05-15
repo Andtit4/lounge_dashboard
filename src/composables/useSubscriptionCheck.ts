@@ -30,7 +30,8 @@ export function useSubscriptionCheck() {
       return false
     }
 
-    if (subscriptionType.value !== requiredType) {
+    const currentType = subscriptionType.value
+    if (currentType !== requiredType) {
       router.push({
         name: 'pricing-plans',
         query: {

@@ -31,10 +31,10 @@ if (import.meta.env.VITE_APP_GTM_ENABLED) {
 
 // Activer le mode développement en débogage
 if (import.meta.env.DEV) {
-  console.log('Application démarrée en mode développement')
-
-  // Ajouter une référence globale pour faciliter le débogage dans la console
-  window.__app = app
+  console.log('Application démarrée en mode développement')(
+    // Ajouter une référence globale pour faciliter le débogage dans la console
+    window as any,
+  ).__app = app
 }
 
 app.mount('#app')

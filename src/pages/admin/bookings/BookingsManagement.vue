@@ -271,8 +271,16 @@ const filteredBookings = computed(() => {
     }
 
     // Comparer
-    if (valA < valB) return sortDirection.value === 'asc' ? -1 : 1
-    if (valA > valB) return sortDirection.value === 'asc' ? 1 : -1
+    if (valA !== undefined && valB !== undefined) {
+      // Vérifier le type et les comparer en toute sécurité
+      if (typeof valA === 'string' && typeof valB === 'string') {
+        const compareResult = valA.localeCompare(valB)
+        return sortDirection.value === 'asc' ? compareResult : -compareResult
+      } else {
+        if (valA < valB) return sortDirection.value === 'asc' ? -1 : 1
+        if (valA > valB) return sortDirection.value === 'asc' ? 1 : -1
+      }
+    }
     return 0
   })
 

@@ -20,8 +20,8 @@ interface ValidationRules {
   password?: { required: any; minLength: any }
 }
 
-// Formulaire réactif
-const form = reactive<{
+// Définir le type du formulaire
+interface UserFormData {
   firstName: string
   lastName: string
   email: string
@@ -30,7 +30,10 @@ const form = reactive<{
   isAdmin: boolean
   subscriptionType: string | null
   subscriptionExpiryDate: Date | null
-}>({
+}
+
+// Formulaire
+const form = reactive<UserFormData>({
   firstName: '',
   lastName: '',
   email: '',
@@ -83,7 +86,7 @@ watch(
       form.phoneNumber = newUser.phoneNumber || ''
       form.isAdmin = newUser.isAdmin
       form.subscriptionType = newUser.subscriptionType || null
-      form.subscriptionExpiryDate = newUser.subscriptionExpiryDate || null
+      form.subscriptionExpiryDate = newUser.subscriptionExpiryDate ? new Date(newUser.subscriptionExpiryDate) : null
 
       // Réinitialiser l'état du mot de passe
       hasPasswordChanged.value = false
@@ -140,9 +143,9 @@ const handleSubmit = async () => {
         email: form.email,
         phoneNumber: form.phoneNumber || undefined,
         // Envoyer uniquement la valeur du type d'abonnement, pas l'objet complet
-        subscriptionType: form.subscriptionType,
-        subscriptionExpiryDate: form.subscriptionExpiryDate,
-      }
+        subscriptionType: form.subscriptionType || undefined,
+        subscriptionExpiryDate: form.subscriptionExpiryDate ? form.subscriptionExpiryDate.toISOString() : undefined,
+      } as IUpdateUserDto
 
       // N'inclure le mot de passe que s'il a été modifié
       if (hasPasswordChanged.value && form.password) {
@@ -157,9 +160,9 @@ const handleSubmit = async () => {
         password: form.password,
         phoneNumber: form.phoneNumber || undefined,
         // Envoyer uniquement la valeur du type d'abonnement, pas l'objet complet
-        subscriptionType: form.subscriptionType,
-        subscriptionExpiryDate: form.subscriptionExpiryDate,
-      }
+        subscriptionType: form.subscriptionType || undefined,
+        subscriptionExpiryDate: form.subscriptionExpiryDate ? form.subscriptionExpiryDate.toISOString() : undefined,
+      } as ICreateUserDto
     }
 
     emit('save', userData)

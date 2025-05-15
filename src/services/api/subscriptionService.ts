@@ -53,6 +53,19 @@ export interface IUpdateSubscriptionDto {
   hasUsedFreeLoungeAccess?: boolean
 }
 
+// Interface pour les transactions d'abonnement
+export interface ICreateSubscriptionTransactionDto {
+  userId: string
+  subscriptionType: string
+  amount: number
+  paymentMethod: string
+  transactionDate: string
+  startDate: string
+  endDate: string
+  status: string
+  notes?: string
+}
+
 // Service API pour les abonnements
 export class SubscriptionService {
   // Récupérer tous les abonnements
@@ -162,6 +175,17 @@ export class SubscriptionService {
       })
     } catch (error) {
       console.error('Erreur lors de la souscription:', error)
+      throw error
+    }
+  }
+
+  // Créer une nouvelle transaction d'abonnement
+  static async createTransaction(transactionData: ICreateSubscriptionTransactionDto): Promise<any> {
+    try {
+      const response: AxiosResponse = await apiClient.post('/subscription-transactions', transactionData)
+      return response.data
+    } catch (error) {
+      console.error("Erreur lors de la création de la transaction d'abonnement:", error)
       throw error
     }
   }
