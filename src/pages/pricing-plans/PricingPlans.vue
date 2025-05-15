@@ -36,7 +36,8 @@
           :class="{
             'md:!py-10 !bg-backgroundCardSecondary': plan.model === 'Premium',
             '!bg-backgroundCardPrimary': plan.model !== 'Premium',
-            'ring-2 ring-primary ring-offset-2': plan.model === selectedPlan || plan.model === currentSubscriptionType,
+            'ring-2 ring-primary ring-offset-2':
+              plan.model === selectedPlan || (userSubscriptionType !== null && plan.model === userSubscriptionType),
           }"
           class="flex w-[326px] md:w-[349px] h-fit p-6 rounded-[13px]"
         >
@@ -72,7 +73,11 @@
             </div>
             <div class="flex justify-center">
               <VaButton
-                :disabled="!isAuthenticated || plan.model === currentSubscriptionType || isLoading"
+                :disabled="
+                  !isAuthenticated ||
+                  (userSubscriptionType !== null && plan.model === userSubscriptionType) ||
+                  isLoading
+                "
                 :loading="isLoading && plan.model === processingPlan"
                 :style="selectButtonStyles"
                 @click="createModal(plan.model)"
@@ -87,14 +92,17 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useToast, useModal } from 'vuestic-ui'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../../stores/authStore'
 import { useSubscriptionStore } from '../../stores/subscriptionStore'
 
 import { badgeStyles, selectButtonStyles } from './styles'
-import { pricingPlans } from './options'
+import { pricingPlans, type PricingPlans } from './options'
+
+// Alias du type existant pour une meilleure lisibilité
+type PricingPlan = PricingPlans
 
 const { init } = useToast()
 const { init: initModal } = useModal()
@@ -105,6 +113,9 @@ const subscriptionStore = useSubscriptionStore()
 
 const isAuthenticated = computed(() => authStore.isAuthenticated)
 const currentSubscriptionType = computed(() => authStore.subscriptionType)
+// Variable locale pour stocker la valeur déballée du computed
+const userSubscriptionType = ref<string | null>(null)
+
 const { error, isLoading } = subscriptionStore
 
 const selectedDuration = ref<string>('Annual')
@@ -112,10 +123,28 @@ const selectedPlan = ref<string | null>(null)
 const redirectMessage = ref<string | null>(null)
 const processingPlan = ref<string | null>(null)
 
+// Mettre à jour la variable locale quand le computed change
+watch(
+  currentSubscriptionType,
+  (newValue) => {
+    // Extraire la valeur du ComputedRef
+    userSubscriptionType.value = newValue instanceof Object && 'value' in newValue ? newValue.value : newValue
+  },
+  { immediate: true },
+)
+
 onMounted(() => {
   // Si l'utilisateur est connecté, on récupère son abonnement actuel
   if (isAuthenticated.value) {
-    selectedPlan.value = currentSubscriptionType.value
+    // Extraire la valeur du ComputedRef
+    userSubscriptionType.value =
+      currentSubscriptionType.value instanceof Object && 'value' in currentSubscriptionType.value
+        ? currentSubscriptionType.value.value
+        : currentSubscriptionType.value
+
+    if (userSubscriptionType.value !== null) {
+      selectedPlan.value = userSubscriptionType.value
+    }
     subscriptionStore.fetchUserSubscriptions()
   }
 
@@ -127,11 +156,12 @@ onMounted(() => {
   }
 })
 
-const getButtonText = (plan) => {
+const getButtonText = (plan: PricingPlan) => {
   if (!isAuthenticated.value) {
     return "Connectez-vous d'abord"
   }
-  if (plan.model === currentSubscriptionType.value) {
+
+  if (userSubscriptionType.value !== null && plan.model === userSubscriptionType.value) {
     return 'Abonnement actuel'
   }
   if (plan.model === 'Free') {
@@ -179,7 +209,10 @@ const selectPlan = async (planModel: string) => {
       }, 1500)
     }
   } catch (err) {
-    init({ message: `Erreur lors de la souscription: ${err.message}`, color: 'danger' })
+    init({
+      message: `Erreur lors de la souscription: ${err instanceof Error ? err.message : 'Erreur inconnue'}`,
+      color: 'danger',
+    })
   } finally {
     processingPlan.value = null
   }

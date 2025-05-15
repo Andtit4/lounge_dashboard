@@ -1,17 +1,26 @@
 // Plugin pour le débogage de l'état des utilisateurs
-import type { App } from 'vue'
+import type { App, ComponentInternalInstance } from 'vue'
+
+// Déclarer les propriétés supplémentaires sur l'objet Window
+declare global {
+  interface Window {
+    __userDebug: {
+      checkState: () => Array<{source: string, state: any}>;
+    };
+  }
+}
 
 export default {
   install: (app: App) => {
     // Ajouter une propriété globale pour le débogage
     window.__userDebug = {
       checkState: () => {
-        const states = []
+        const states: Array<{source: string, state: any}> = []
 
         // Parcourir tous les composants pour trouver les états liés aux utilisateurs
         try {
-          const appInstance = app._instance
-          if (appInstance && appInstance.component) {
+          const appInstance = app._instance as ComponentInternalInstance | null
+          if (appInstance) {
             console.log("Composants de l'application:", appInstance)
             states.push({ source: 'App Instance', state: appInstance })
           }

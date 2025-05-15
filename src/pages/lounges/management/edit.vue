@@ -191,7 +191,8 @@ const loadLoungeData = async () => {
     if (lounge) {
       Object.keys(formData).forEach((key) => {
         if (key in lounge) {
-          formData[key as keyof UpdateLoungeDto] = lounge[key as keyof typeof lounge]
+          const value = lounge[key as keyof typeof lounge];
+          (formData as any)[key] = value;
         }
       })
     }
@@ -236,17 +237,17 @@ const validateForm = (): boolean => {
     isValid = false
   }
 
-  if (formData.price < 0) {
+  if (formData.price !== undefined && formData.price < 0) {
     errors.price = 'Le prix doit être supérieur ou égal à 0'
     isValid = false
   }
 
-  if (formData.classicDiscountPrice < 0) {
+  if (formData.classicDiscountPrice !== undefined && formData.classicDiscountPrice < 0) {
     errors.classicDiscountPrice = 'Le prix abonné classic doit être supérieur ou égal à 0'
     isValid = false
   }
 
-  if (formData.premiumDiscountPrice < 0) {
+  if (formData.premiumDiscountPrice !== undefined && formData.premiumDiscountPrice < 0) {
     errors.premiumDiscountPrice = 'Le prix abonné premium doit être supérieur ou égal à 0'
     isValid = false
   }
@@ -274,7 +275,9 @@ const submitForm = async () => {
 // Mise à jour uniquement de l'image du salon
 const updateLoungeImage = async (imageUrl: string) => {
   try {
-    await loungeStore.updateLounge(loungeId.value, { imageUrl })
+    // Typage explicite pour éviter l'erreur de type
+    const updateData: UpdateLoungeDto = { imageUrl }
+    await loungeStore.updateLounge(loungeId.value, updateData)
   } catch (err) {
     console.error("Erreur lors de la mise à jour de l'image:", err)
   }

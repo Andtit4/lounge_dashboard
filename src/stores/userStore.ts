@@ -80,8 +80,8 @@ const createUser = async (userData: ICreateUserDto) => {
   error.value = null
 
   try {
-    // Sanitiser les données avant envoi
-    const sanitizedData = sanitizeUserData(userData)
+    // Sanitiser les données avant envoi et assurer que le type est correct
+    const sanitizedData = sanitizeUserData(userData) as ICreateUserDto
     const newUser = await UserService.createUser(sanitizedData)
     users.value.push(newUser)
 

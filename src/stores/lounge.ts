@@ -82,6 +82,7 @@ export const useLoungeStore = defineStore('lounge', () => {
     error.value = null
 
     try {
+      // Construire l'URL avec le paramètre de requête
       const response = await httpService.get<Lounge[]>(api.searchLounges(query))
       if (response.data) {
         lounges.value = response.data

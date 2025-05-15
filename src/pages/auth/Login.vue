@@ -56,6 +56,18 @@ import httpService from '../../services/httpService'
 import api from '../../services/api'
 import { useAuthStore } from '../../stores/auth'
 
+// Définir l'interface pour la réponse de l'API
+interface LoginResponse {
+  user?: {
+    id: string;
+    email: string;
+    isAdmin: boolean;
+    [key: string]: any;
+  };
+  token?: string;
+  [key: string]: any;
+}
+
 const { validate } = useForm('form')
 const { push } = useRouter()
 const route = useRoute()
@@ -85,7 +97,7 @@ const submit = async () => {
       if (response.error) {
         error.value = response.error.message || 'Échec de la connexion'
       } else if (response.data) {
-        const userData = response.data
+        const userData = response.data as LoginResponse
 
         // Stocker les données de l'utilisateur dans le store d'authentification
         authStore.setUser(userData)
@@ -93,14 +105,14 @@ const submit = async () => {
         // Si "Rester connecté" est coché, stocker dans localStorage
         if (formData.keepLoggedIn) {
           // S'assurer que nous stockons correctement l'objet user
-          localStorage.setItem('user', JSON.stringify(userData.user || userData))
+          localStorage.setItem('user', JSON.stringify(userData.user || {}))
           // Stocker également le token JWT sans le wrapper JSON
           if (userData.token) {
             localStorage.setItem('token', userData.token)
           }
         } else {
           // Sinon, utiliser sessionStorage qui persiste uniquement pour la session
-          sessionStorage.setItem('user', JSON.stringify(userData.user || userData))
+          sessionStorage.setItem('user', JSON.stringify(userData.user || {}))
           // Stocker également le token JWT sans le wrapper JSON
           if (userData.token) {
             sessionStorage.setItem('token', userData.token)
@@ -108,9 +120,9 @@ const submit = async () => {
         }
 
         // Debug - voir ce qui est stocké
-        console.log('User stocké:', JSON.stringify(userData.user || userData))
-        console.log('Token stocké:', userData.token)
-        console.log('isAdmin:', (userData.user || userData).isAdmin)
+        console.log('User stocké:', JSON.stringify(userData.user || {}))
+        console.log('Token stocké:', userData.token || '')
+        console.log('isAdmin:', userData.user?.isAdmin)
 
         init({ message: 'Vous êtes connecté avec succès', color: 'success' })
 

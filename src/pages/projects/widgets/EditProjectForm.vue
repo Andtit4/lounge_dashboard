@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { EmptyProject, Project } from '../types'
-import { SelectOption } from 'vuestic-ui'
+import { SelectOption, useBreakpoint } from 'vuestic-ui'
 import ProjectStatusBadge from '../components/ProjectStatusBadge.vue'
 import UserAvatar from '../../users/widgets/UserAvatar.vue'
 import { useUsersStore } from '../../../stores/users'
+
+// Obtenir la référence au breakpoint pour l'utiliser dans le template
+const vaBreakpoint = useBreakpoint()
 
 const props = defineProps<{
   project: Project | null
@@ -95,7 +98,7 @@ const teamFiltersSearch = ref('')
       multiple
       :rules="[(v: any) => ('length' in v && v.length > 0) || 'This field is required']"
       :options="usersStore.items"
-      :max-visible-options="$vaBreakpoint.mdUp ? 3 : 1"
+      :max-visible-options="vaBreakpoint.mdUp ? 3 : 1"
     >
       <template #content="{ valueArray }">
         <template v-if="valueArray?.length">
