@@ -1,6 +1,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreateSubscriptionTransactions1720000000000 implements MigrationInterface {
+export class CreateSubscriptionTransactions1720000000000
+  implements MigrationInterface
+{
   name = 'CreateSubscriptionTransactions1720000000000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -37,4 +39,4 @@ export class CreateSubscriptionTransactions1720000000000 implements MigrationInt
     `);
     await queryRunner.query(`DROP TABLE \`subscription_transactions\``);
   }
-} 
+}

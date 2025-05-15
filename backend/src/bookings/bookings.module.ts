@@ -7,11 +7,7 @@ import { UsersModule } from '../users/users.module';
 import { LoungesModule } from '../lounges/lounges.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Booking]),
-    UsersModule,
-    LoungesModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Booking]), UsersModule, LoungesModule],
   controllers: [BookingsController],
   providers: [BookingsService],
   exports: [BookingsService],

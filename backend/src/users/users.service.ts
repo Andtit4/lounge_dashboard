@@ -1,4 +1,8 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -21,15 +25,15 @@ export class UsersService {
       throw new ConflictException('Email already exists');
     }
 
-    const { 
-      password, 
-      subscriptionType, 
-      subscriptionExpiryDate, 
-      ...otherProps 
+    const {
+      password,
+      subscriptionType,
+      subscriptionExpiryDate,
+      ...otherProps
     } = createUserDto;
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    
+
     const user = this.usersRepository.create({
       ...otherProps,
       password: hashedPassword,
@@ -38,8 +42,11 @@ export class UsersService {
     if (subscriptionType !== null && subscriptionType !== undefined) {
       user.subscriptionType = subscriptionType;
     }
-    
-    if (subscriptionExpiryDate !== null && subscriptionExpiryDate !== undefined) {
+
+    if (
+      subscriptionExpiryDate !== null &&
+      subscriptionExpiryDate !== undefined
+    ) {
       user.subscriptionExpiryDate = subscriptionExpiryDate;
     }
 
@@ -66,18 +73,21 @@ export class UsersService {
     return user;
   }
 
-  async update(id: string, updateUserDto: Partial<CreateUserDto>): Promise<User> {
+  async update(
+    id: string,
+    updateUserDto: Partial<CreateUserDto>,
+  ): Promise<User> {
     const user = await this.findOne(id);
-    
+
     if (updateUserDto.password) {
       user.password = await bcrypt.hash(updateUserDto.password, 10);
     }
 
-    const { 
-      password, 
-      subscriptionType, 
-      subscriptionExpiryDate, 
-      ...otherProps 
+    const {
+      password,
+      subscriptionType,
+      subscriptionExpiryDate,
+      ...otherProps
     } = updateUserDto;
 
     Object.assign(user, otherProps);
@@ -109,11 +119,11 @@ export class UsersService {
   async validateUser(email: string, password: string): Promise<User> {
     const user = await this.findByEmail(email);
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    
+
     if (!isPasswordValid) {
       throw new NotFoundException('Invalid credentials');
     }
-    
+
     return user;
   }
-} 
+}

@@ -30,4 +30,4 @@ export class CreateSubscriptionDto {
   @ApiProperty({ default: true })
   @IsBoolean()
   isActive: boolean = true;
-} 
+}

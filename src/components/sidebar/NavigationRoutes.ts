@@ -1,7 +1,7 @@
 export interface INavigationRoute {
   name: string
   displayName: string
-  meta: { icon: string; adminOnly?: boolean }
+  meta: { icon?: string; adminOnly?: boolean }
   children?: INavigationRoute[]
 }
 
@@ -30,10 +30,12 @@ export default {
         {
           name: 'users',
           displayName: 'menu.users.list',
+          meta: {},
         },
         {
           name: 'users-management',
           displayName: 'menu.users.management',
+          meta: {},
         },
       ],
     },
@@ -55,14 +57,17 @@ export default {
         {
           name: 'lounges-list',
           displayName: 'menu.lounges.list',
+          meta: {},
         },
         {
           name: 'lounges-create',
           displayName: 'menu.lounges.create',
+          meta: {},
         },
         {
           name: 'lounges-analytics',
           displayName: 'menu.lounges.analytics',
+          meta: {},
         },
       ],
     },

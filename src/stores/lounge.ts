@@ -4,58 +4,6 @@ import api from '../services/api'
 import httpService from '../services/httpService'
 import type { Lounge, CreateLoungeDto, UpdateLoungeDto } from '../types'
 
-// Données d'exemples à utiliser si l'API renvoie un tableau vide
-const sampleLoungesData: Lounge[] = [
-  {
-    id: 'sample-1',
-    name: 'Dakar Premium Lounge',
-    location: 'Terminal International',
-    airport: 'Aéroport International Blaise Diagne',
-    country: 'Sénégal',
-    description:
-      'Un salon luxueux offrant une vue imprenable sur les pistes, avec un service attentionné et une cuisine locale raffinée.',
-    price: 45,
-    classicDiscountPrice: 30,
-    premiumDiscountPrice: 20,
-    imageUrl:
-      'https://images.unsplash.com/photo-1566196544088-7891620c9d95?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: 'sample-2',
-    name: 'Lagos Executive Retreat',
-    location: 'Terminal 2',
-    airport: 'Aéroport International Murtala Muhammed',
-    country: 'Nigeria',
-    description:
-      "Échappez au bruit et à l'agitation dans ce havre de paix offrant des services haut de gamme pour voyageurs d'affaires et de loisirs.",
-    price: 55,
-    classicDiscountPrice: 40,
-    premiumDiscountPrice: 25,
-    imageUrl:
-      'https://images.unsplash.com/photo-1596436889106-be35e843f974?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: 'sample-3',
-    name: 'Le Casablanca Royal',
-    location: 'Terminal 1',
-    airport: 'Aéroport Mohammed V',
-    country: 'Maroc',
-    description:
-      'Mêlant tradition marocaine et confort moderne, ce salon offre une expérience immersive dans un cadre somptueux avec des spécialités locales.',
-    price: 50,
-    classicDiscountPrice: 35,
-    premiumDiscountPrice: 22,
-    imageUrl:
-      'https://images.unsplash.com/photo-1630217121039-9b09eb534133?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-]
-
 export const useLoungeStore = defineStore('lounge', () => {
   const lounges = ref<Lounge[]>([])
   const currentLounge = ref<Lounge | null>(null)
@@ -72,28 +20,36 @@ export const useLoungeStore = defineStore('lounge', () => {
   })
 
   // Actions
-  const fetchLounges = async () => {
+  const fetchLounges = async (forceRefresh = true) => {
     loading.value = true
     error.value = null
 
     try {
-      const response = await httpService.get<Lounge[]>(api.lounges())
-      if (response.data) {
-        // Si l'API renvoie un tableau vide, utiliser les données d'exemple
-        if (response.data.length === 0) {
-          lounges.value = sampleLoungesData
-        } else {
-          lounges.value = response.data
+      console.log('[LOUNGE-STORE] Récupération de la liste des salons', forceRefresh ? '(forcée)' : '')
+      
+      // Configuration pour forcer une requête fraîche et contourner le cache si nécessaire
+      const config = forceRefresh ? {
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+          'Expires': '0',
         }
+      } : undefined
+      
+      const response = await httpService.get<Lounge[]>(api.lounges(), config)
+      
+      if (response.data) {
+        console.log('[LOUNGE-STORE] Salons récupérés avec succès:', response.data.length)
+        lounges.value = response.data
       } else if (response.error) {
+        console.error('[LOUNGE-STORE] Erreur lors de la récupération des salons:', response.error.message)
         error.value = response.error.message
-        // En cas d'erreur, utiliser aussi les données d'exemple
-        lounges.value = sampleLoungesData
+        lounges.value = []
       }
     } catch (err) {
+      console.error('[LOUNGE-STORE] Exception lors de la récupération des salons:', err)
       error.value = err instanceof Error ? err.message : 'Une erreur est survenue'
-      // En cas d'erreur, utiliser aussi les données d'exemple
-      lounges.value = sampleLoungesData
+      lounges.value = []
     } finally {
       loading.value = false
     }
@@ -109,25 +65,11 @@ export const useLoungeStore = defineStore('lounge', () => {
         currentLounge.value = response.data
       } else if (response.error) {
         error.value = response.error.message
-        // Chercher dans les données d'exemple si disponibles
-        const sampleLounge = sampleLoungesData.find((lounge) => lounge.id === id)
-        if (sampleLounge) {
-          currentLounge.value = sampleLounge
-        } else if (id.startsWith('sample-')) {
-          // Si l'ID commence par "sample-", chercher parmi les exemples
-          const sampleId = parseInt(id.replace('sample-', ''), 10)
-          if (sampleId > 0 && sampleId <= sampleLoungesData.length) {
-            currentLounge.value = sampleLoungesData[sampleId - 1]
-          }
-        }
+        currentLounge.value = null
       }
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Une erreur est survenue'
-      // Chercher dans les données d'exemple
-      const sampleLounge = sampleLoungesData.find((lounge) => lounge.id === id)
-      if (sampleLounge) {
-        currentLounge.value = sampleLounge
-      }
+      currentLounge.value = null
     } finally {
       loading.value = false
     }
@@ -192,15 +134,66 @@ export const useLoungeStore = defineStore('lounge', () => {
     error.value = null
 
     try {
+      console.log("[LOUNGE-STORE] Création d'un salon avec données:", loungeData)
+
+      // Vérifier le format des données (notamment les types numériques)
+      if (typeof loungeData.price !== 'number') {
+        console.error(
+          "[LOUNGE-STORE] Erreur de type: price n'est pas un nombre",
+          typeof loungeData.price,
+          loungeData.price,
+        )
+        loungeData.price = Number(loungeData.price)
+      }
+      if (typeof loungeData.classicDiscountPrice !== 'number') {
+        console.error(
+          "[LOUNGE-STORE] Erreur de type: classicDiscountPrice n'est pas un nombre",
+          typeof loungeData.classicDiscountPrice,
+          loungeData.classicDiscountPrice,
+        )
+        loungeData.classicDiscountPrice = Number(loungeData.classicDiscountPrice)
+      }
+      if (typeof loungeData.premiumDiscountPrice !== 'number') {
+        console.error(
+          "[LOUNGE-STORE] Erreur de type: premiumDiscountPrice n'est pas un nombre",
+          typeof loungeData.premiumDiscountPrice,
+          loungeData.premiumDiscountPrice,
+        )
+        loungeData.premiumDiscountPrice = Number(loungeData.premiumDiscountPrice)
+      }
+
+      console.log('[LOUNGE-STORE] Données après conversion:', loungeData)
+      console.log('[LOUNGE-STORE] URL endpoint:', api.createLounge())
+
       const response = await httpService.post<Lounge>(api.createLounge(), loungeData)
+
+      console.log('[LOUNGE-STORE] Réponse complète:', response)
+
+      // Si la requête a retourné un code d'erreur mais pas d'erreur explicite
+      if (response.statusCode === 401) {
+        error.value =
+          "Erreur d'authentification (401): Vous n'êtes pas autorisé à créer un salon. Veuillez vous reconnecter."
+        console.error('[LOUNGE-STORE] Erreur 401 lors de la création du salon. Token probablement invalide ou expiré.')
+        throw new Error(error.value)
+      }
+
       if (response.data) {
+        console.log('[LOUNGE-STORE] Salon créé avec succès:', response.data)
         lounges.value.push(response.data)
         return response.data
       } else if (response.error) {
         error.value = response.error.message
+        console.error('[LOUNGE-STORE] Erreur lors de la création du salon:', error.value)
+        throw new Error(error.value)
+      } else {
+        error.value = "Aucune donnée ou erreur retournée par l'API"
+        console.error('[LOUNGE-STORE] Réponse API vide ou invalide')
+        throw new Error(error.value)
       }
     } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Une erreur est survenue'
+      error.value = err instanceof Error ? err.message : 'Une erreur est survenue lors de la création du salon'
+      console.error('[LOUNGE-STORE] Exception lors de la création du salon:', error.value)
+      throw err // Propager l'erreur pour permettre sa gestion dans le composant
     } finally {
       loading.value = false
     }
@@ -234,23 +227,48 @@ export const useLoungeStore = defineStore('lounge', () => {
   const deleteLounge = async (id: string) => {
     loading.value = true
     error.value = null
+    console.log(`[LOUNGE-STORE] Tentative de suppression du salon ID:`, id)
 
     try {
       const response = await httpService.delete<Lounge>(api.deleteLounge(id))
-      if (response.data || !response.error) {
+      console.log(`[LOUNGE-STORE] Réponse de suppression:`, response)
+      
+      // La suppression est considérée comme réussie si:
+      // 1. Une réponse avec données est reçue
+      // 2. Ou aucune erreur n'est retournée
+      // 3. Ou le statut HTTP est 204 (No Content)
+      if (response.data || !response.error || response.statusCode === 204) {
+        console.log(`[LOUNGE-STORE] Suppression du salon réussie`)
+        
+        // Supprimer le salon de la liste des salons
         const index = lounges.value.findIndex((lounge) => lounge.id === id)
         if (index !== -1) {
+          console.log(`[LOUNGE-STORE] Suppression du salon de la liste locale à l'index:`, index)
           lounges.value.splice(index, 1)
+        } else {
+          console.warn(`[LOUNGE-STORE] Le salon n'a pas été trouvé dans la liste locale. Un rafraîchissement est nécessaire.`)
         }
+        
+        // Si le salon supprimé est le salon courant, le réinitialiser
         if (currentLounge.value && currentLounge.value.id === id) {
+          console.log(`[LOUNGE-STORE] Réinitialisation du salon courant`)
           currentLounge.value = null
         }
+        
         return true
       } else if (response.error) {
+        console.error(`[LOUNGE-STORE] Erreur lors de la suppression:`, response.error.message)
         error.value = response.error.message
+        return false
+      } else {
+        console.warn(`[LOUNGE-STORE] Réponse de suppression ambiguë, considérée comme un échec`)
+        error.value = 'La suppression a échoué pour une raison inconnue'
+        return false
       }
     } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Une erreur est survenue'
+      error.value = err instanceof Error ? err.message : 'Une erreur est survenue lors de la suppression'
+      console.error('[LOUNGE-STORE] Exception lors de la suppression du salon:', error.value)
+      return false
     } finally {
       loading.value = false
     }

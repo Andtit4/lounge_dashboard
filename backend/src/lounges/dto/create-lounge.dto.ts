@@ -43,4 +43,4 @@ export class CreateLoungeDto {
   @IsOptional()
   @IsString()
   amenities?: string;
-} 
+}

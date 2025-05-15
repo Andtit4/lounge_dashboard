@@ -95,6 +95,12 @@ const routes: Array<RouteRecordRaw> = [
         beforeEnter: requireAdmin,
       },
       {
+        name: 'lounges-edit',
+        path: 'lounges-management/edit/:id',
+        component: () => import('../pages/lounges/management/edit.vue'),
+        beforeEnter: requireAdmin,
+      },
+      {
         name: 'lounges-analytics',
         path: 'lounges-management/analytics',
         component: () => import('../pages/lounges/management/analytics.vue'),

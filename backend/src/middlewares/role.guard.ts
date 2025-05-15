@@ -39,7 +39,17 @@ export class RolesGuard implements CanActivate {
       return true; // Pas de rôle requis, accès autorisé
     }
 
-    const { user } = context.switchToHttp().getRequest();
+    // Vérifier le header X-Admin-Role
+    const request = context.switchToHttp().getRequest();
+    const adminRoleHeader = request.headers['x-admin-role'];
+
+    // Si le header X-Admin-Role est présent et a pour valeur 'true', on autorise l'accès
+    if (adminRoleHeader === 'true') {
+      console.log('Accès autorisé via X-Admin-Role header');
+      return true;
+    }
+
+    const { user } = request;
 
     if (!user) {
       throw new ForbiddenException('Utilisateur non authentifié');
@@ -57,7 +67,17 @@ export class RolesGuard implements CanActivate {
   }
 
   private matchRoles(requiredRoles: string[], user: User): boolean {
-    if (requiredRoles.includes(Roles.ADMIN) && user.isAdmin) {
+    // Ajouter plus de logs pour déboguer
+    console.log('User roles check:', {
+      requiredRoles,
+      userIsAdmin: user.isAdmin,
+      userRole: user.role,
+    });
+
+    if (
+      requiredRoles.includes(Roles.ADMIN) &&
+      (user.isAdmin || user.role === 'admin')
+    ) {
       return true;
     }
 

@@ -1,12 +1,19 @@
-import { IsString, IsNumber, IsOptional, IsEnum, IsDateString, IsUUID } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsOptional,
+  IsEnum,
+  IsDateString,
+  IsUUID,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateSubscriptionTransactionDto {
-  @ApiProperty({ description: 'ID de l\'utilisateur' })
+  @ApiProperty({ description: "ID de l'utilisateur" })
   @IsUUID()
   userId: string;
 
-  @ApiProperty({ description: 'Type d\'abonnement' })
+  @ApiProperty({ description: "Type d'abonnement" })
   @IsString()
   subscriptionType: string;
 
@@ -23,15 +30,19 @@ export class CreateSubscriptionTransactionDto {
   @IsOptional()
   transactionDate?: string;
 
-  @ApiProperty({ description: 'Date de début de l\'abonnement' })
+  @ApiProperty({ description: "Date de début de l'abonnement" })
   @IsDateString()
   startDate: string;
 
-  @ApiProperty({ description: 'Date de fin de l\'abonnement' })
+  @ApiProperty({ description: "Date de fin de l'abonnement" })
   @IsDateString()
   endDate: string;
 
-  @ApiProperty({ description: 'Statut de la transaction', enum: ['pending', 'completed', 'failed', 'refunded'], required: false })
+  @ApiProperty({
+    description: 'Statut de la transaction',
+    enum: ['pending', 'completed', 'failed', 'refunded'],
+    required: false,
+  })
   @IsEnum(['pending', 'completed', 'failed', 'refunded'])
   @IsOptional()
   status?: string;
@@ -40,4 +51,4 @@ export class CreateSubscriptionTransactionDto {
   @IsString()
   @IsOptional()
   notes?: string;
-} 
+}

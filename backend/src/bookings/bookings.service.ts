@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Booking } from './entities/booking.entity';
@@ -17,10 +21,10 @@ export class BookingsService {
 
   async create(createBookingDto: CreateBookingDto): Promise<Booking> {
     const { userId, loungeId, ...bookingData } = createBookingDto;
-    
+
     const user = await this.usersService.findOne(userId);
     const lounge = await this.loungesService.findOne(loungeId);
-    
+
     const booking = this.bookingsRepository.create({
       ...bookingData,
       user,
@@ -41,11 +45,11 @@ export class BookingsService {
       where: { id },
       relations: ['user', 'lounge'],
     });
-    
+
     if (!booking) {
       throw new NotFoundException('Booking not found');
     }
-    
+
     return booking;
   }
 
@@ -63,7 +67,10 @@ export class BookingsService {
     });
   }
 
-  async update(id: string, updateBookingDto: Partial<CreateBookingDto>): Promise<Booking> {
+  async update(
+    id: string,
+    updateBookingDto: Partial<CreateBookingDto>,
+  ): Promise<Booking> {
     const booking = await this.findOne(id);
     Object.assign(booking, updateBookingDto);
     return await this.bookingsRepository.save(booking);
@@ -95,9 +102,11 @@ export class BookingsService {
   async completeBooking(id: string): Promise<Booking> {
     const booking = await this.findOne(id);
     if (booking.status !== BookingStatus.CONFIRMED) {
-      throw new BadRequestException('Booking must be confirmed before completion');
+      throw new BadRequestException(
+        'Booking must be confirmed before completion',
+      );
     }
     booking.status = BookingStatus.COMPLETED;
     return await this.bookingsRepository.save(booking);
   }
-} 
+}

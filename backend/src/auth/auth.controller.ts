@@ -23,14 +23,14 @@ export class AuthController {
       example1: {
         value: {
           email: 'user@example.com',
-          password: 'password123'
+          password: 'password123',
         },
-        summary: 'Exemple d\'identifiants de connexion'
-      }
-    }
+        summary: "Exemple d'identifiants de connexion",
+      },
+    },
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Connexion réussie',
     schema: {
       type: 'object',
@@ -44,13 +44,21 @@ export class AuthController {
             lastName: { type: 'string' },
             isAdmin: { type: 'boolean' },
             subscriptionType: { type: 'string', nullable: true },
-            subscriptionExpiryDate: { type: 'string', format: 'date-time', nullable: true }
-          }
+            subscriptionExpiryDate: {
+              type: 'string',
+              format: 'date-time',
+              nullable: true,
+            },
+          },
         },
         token: { type: 'string' },
-        redirect: { type: 'string', description: 'Chemin de redirection basé sur le rôle de l\'utilisateur' }
-      }
-    }
+        redirect: {
+          type: 'string',
+          description:
+            "Chemin de redirection basé sur le rôle de l'utilisateur",
+        },
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Identifiants invalides' })
   async login(@Body() loginDto: LoginDto) {
@@ -60,8 +68,8 @@ export class AuthController {
   @Post('signup')
   @ApiOperation({ summary: 'Inscription utilisateur' })
   @ApiBody({ type: CreateUserDto })
-  @ApiResponse({ 
-    status: 201, 
+  @ApiResponse({
+    status: 201,
     description: 'Utilisateur créé avec succès',
     schema: {
       type: 'object',
@@ -75,16 +83,23 @@ export class AuthController {
             lastName: { type: 'string' },
             isAdmin: { type: 'boolean', default: false },
             subscriptionType: { type: 'string', nullable: true },
-            subscriptionExpiryDate: { type: 'string', format: 'date-time', nullable: true }
-          }
+            subscriptionExpiryDate: {
+              type: 'string',
+              format: 'date-time',
+              nullable: true,
+            },
+          },
         },
         token: { type: 'string' },
-        redirect: { type: 'string', description: 'Chemin de redirection vers la liste des salons' }
-      }
-    }
+        redirect: {
+          type: 'string',
+          description: 'Chemin de redirection vers la liste des salons',
+        },
+      },
+    },
   })
   @ApiResponse({ status: 409, description: 'Email déjà utilisé' })
   async signup(@Body() createUserDto: CreateUserDto) {
     return this.authService.signup(createUserDto);
   }
-} 
+}

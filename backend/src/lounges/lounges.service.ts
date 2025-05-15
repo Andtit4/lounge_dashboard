@@ -28,7 +28,10 @@ export class LoungesService {
     return lounge;
   }
 
-  async update(id: string, updateLoungeDto: Partial<CreateLoungeDto>): Promise<Lounge> {
+  async update(
+    id: string,
+    updateLoungeDto: Partial<CreateLoungeDto>,
+  ): Promise<Lounge> {
     const lounge = await this.findOne(id);
     Object.assign(lounge, updateLoungeDto);
     return await this.loungesRepository.save(lounge);
@@ -64,13 +67,13 @@ export class LoungesService {
       .select('lounge.country, COUNT(lounge.id) as count')
       .groupBy('lounge.country')
       .getRawMany();
-    
+
     const loungesByAirport = await this.loungesRepository
       .createQueryBuilder('lounge')
       .select('lounge.airport, COUNT(lounge.id) as count')
       .groupBy('lounge.airport')
       .getRawMany();
-    
+
     return {
       totalLounges,
       loungesByCountry,
@@ -82,10 +85,10 @@ export class LoungesService {
   async getLoungeStats(id: string) {
     // Vérifier que le salon existe
     const lounge = await this.findOne(id);
-    
+
     // Dans un cas réel, vous récupéreriez des statistiques depuis d'autres tables
     // comme les réservations, les avis, etc.
-    
+
     // Pour cet exemple, nous renvoyons des données fictives
     return {
       loungeId: lounge.id,
@@ -101,4 +104,4 @@ export class LoungesService {
       // Autres statistiques spécifiques au salon
     };
   }
-} 
+}

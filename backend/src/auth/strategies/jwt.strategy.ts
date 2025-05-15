@@ -17,6 +17,22 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const user = await this.usersService.findOne(payload.sub);
     // On retire le mot de passe et renvoi l'utilisateur
     const { password, ...result } = user;
+
+    // S'assurer que isAdmin est correctement défini
+    result.isAdmin =
+      result.isAdmin === true ||
+      result.role === 'admin' ||
+      payload.isAdmin === true;
+
+    // Log pour déboguer
+    console.log('JWT validation:', {
+      userId: result.id,
+      email: result.email,
+      isAdmin: result.isAdmin,
+      role: result.role,
+      payloadIsAdmin: payload.isAdmin,
+    });
+
     return result;
   }
-} 
+}

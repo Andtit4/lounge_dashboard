@@ -61,9 +61,21 @@
   <VaAlert v-else-if="loungeStore.error" color="danger" class="mb-6" closable>
     {{ loungeStore.error }}
   </VaAlert>
-  <VaAlert v-else-if="!loungeStore.lounges.length" color="info" class="mb-6">
-    Aucun salon ne correspond à votre recherche
-  </VaAlert>
+
+  <div v-else-if="!loungeStore.lounges.length" class="empty-state mb-6">
+    <VaCard class="empty-state-card text-center py-6">
+      <div class="mb-4">
+        <i class="va-icon material-icons text-6xl text-gray-400">airline_seat_individual_suite</i>
+      </div>
+      <h3 class="text-xl font-bold mb-2">Aucun salon VIP disponible</h3>
+      <p class="text-gray-500 mb-4">
+        Nous n'avons pas encore de salons disponibles dans cette catégorie.
+        <br />
+        Veuillez réessayer avec d'autres critères de recherche ou revenir plus tard.
+      </p>
+      <VaButton preset="primary" icon="refresh" @click="resetFilters"> Réinitialiser les filtres </VaButton>
+    </VaCard>
+  </div>
 
   <!-- Grille de salons -->
   <div v-else class="lounges-grid">
@@ -449,6 +461,39 @@ onMounted(async () => {
   justify-content: center;
   align-items: center;
   min-height: 300px;
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.empty-state-card {
+  max-width: 550px;
+  margin: 0 auto;
+  border: 1px dashed #ddd;
+  background-color: #f9f9f9;
+}
+
+.text-gray-400 {
+  color: #9ca3af;
+}
+
+.text-gray-500 {
+  color: #6b7280;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.text-6xl {
+  font-size: 3.75rem; /* 60px */
+  line-height: 1;
 }
 
 /* Responsive */

@@ -34,7 +34,7 @@
               :active="isActiveChildRoute(childRoute)"
               :active-color="activeColor"
               :text-color="textColor(childRoute)"
-              :aria-label="`Visit ${t(route.displayName)}`"
+              :aria-label="`Visit ${t(childRoute.displayName)}`"
               hover-opacity="0.10"
             >
               <VaSidebarItemContent class="py-3 pr-2 pl-11">

@@ -1,4 +1,10 @@
-import { IsString, IsDate, IsNumber, IsEnum, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsDate,
+  IsNumber,
+  IsEnum,
+  IsOptional,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export enum BookingStatus {
@@ -37,4 +43,4 @@ export class CreateBookingDto {
   @IsString()
   @IsOptional()
   specialRequests?: string;
-} 
+}

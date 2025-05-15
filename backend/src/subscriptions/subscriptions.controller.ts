@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { SubscriptionsService } from './subscriptions.service';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
@@ -11,15 +20,24 @@ export class SubscriptionsController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new subscription' })
-  @ApiResponse({ status: 201, description: 'Subscription successfully created.' })
-  @ApiResponse({ status: 400, description: 'User already has an active subscription.' })
+  @ApiResponse({
+    status: 201,
+    description: 'Subscription successfully created.',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'User already has an active subscription.',
+  })
   create(@Body() createSubscriptionDto: CreateSubscriptionDto) {
     return this.subscriptionsService.create(createSubscriptionDto);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all subscriptions or subscriptions by user' })
-  @ApiResponse({ status: 200, description: 'Return all subscriptions or user subscriptions.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Return all subscriptions or user subscriptions.',
+  })
   findAll(@Query('userId') userId?: string) {
     if (userId) {
       return this.subscriptionsService.findByUser(userId);
@@ -37,15 +55,24 @@ export class SubscriptionsController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a subscription' })
-  @ApiResponse({ status: 200, description: 'Subscription successfully updated.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Subscription successfully updated.',
+  })
   @ApiResponse({ status: 404, description: 'Subscription not found.' })
-  update(@Param('id') id: string, @Body() updateSubscriptionDto: UpdateSubscriptionDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateSubscriptionDto: UpdateSubscriptionDto,
+  ) {
     return this.subscriptionsService.update(id, updateSubscriptionDto);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a subscription' })
-  @ApiResponse({ status: 200, description: 'Subscription successfully deleted.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Subscription successfully deleted.',
+  })
   @ApiResponse({ status: 404, description: 'Subscription not found.' })
   remove(@Param('id') id: string) {
     return this.subscriptionsService.remove(id);
@@ -53,8 +80,14 @@ export class SubscriptionsController {
 
   @Patch(':id/cancel')
   @ApiOperation({ summary: 'Cancel a subscription' })
-  @ApiResponse({ status: 200, description: 'Subscription successfully cancelled.' })
-  @ApiResponse({ status: 400, description: 'Subscription is already inactive.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Subscription successfully cancelled.',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Subscription is already inactive.',
+  })
   cancelSubscription(@Param('id') id: string) {
     return this.subscriptionsService.cancelSubscription(id);
   }
@@ -65,4 +98,4 @@ export class SubscriptionsController {
   checkSubscriptionStatus(@Param('id') id: string) {
     return this.subscriptionsService.checkStatus(id);
   }
-} 
+}

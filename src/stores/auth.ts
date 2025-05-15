@@ -39,12 +39,22 @@ export const useAuthStore = defineStore('auth', () => {
   function setUser(userData: any) {
     if (userData.user) {
       currentUser.value = userData.user
+      // Stockage de l'utilisateur
+      localStorage.setItem('user', JSON.stringify(userData.user))
+      sessionStorage.setItem('user', JSON.stringify(userData.user))
     } else {
       currentUser.value = userData
+      // Stockage de l'utilisateur
+      localStorage.setItem('user', JSON.stringify(userData))
+      sessionStorage.setItem('user', JSON.stringify(userData))
     }
 
     if (userData.token) {
       token.value = userData.token
+      // Stockage du token
+      localStorage.setItem('token', userData.token)
+      sessionStorage.setItem('token', userData.token)
+      console.log('Token stocké:', userData.token.substring(0, 10) + '...')
     }
   }
 
@@ -60,12 +70,25 @@ export const useAuthStore = defineStore('auth', () => {
         // Gérer à la fois le format { user, token } et le format utilisateur direct
         if (response.data.user) {
           currentUser.value = response.data.user
+          localStorage.setItem('user', JSON.stringify(response.data.user))
+          sessionStorage.setItem('user', JSON.stringify(response.data.user))
         } else {
           currentUser.value = response.data
+          localStorage.setItem('user', JSON.stringify(response.data))
+          sessionStorage.setItem('user', JSON.stringify(response.data))
         }
 
         if (response.data.token) {
           token.value = response.data.token
+          localStorage.setItem('token', response.data.token)
+          sessionStorage.setItem('token', response.data.token)
+          console.log('Token stocké après login:', response.data.token.substring(0, 10) + '...')
+        } else if (response.data.accessToken) {
+          // Certaines API retournent accessToken au lieu de token
+          token.value = response.data.accessToken
+          localStorage.setItem('token', response.data.accessToken)
+          sessionStorage.setItem('token', response.data.accessToken)
+          console.log('AccessToken stocké après login:', response.data.accessToken.substring(0, 10) + '...')
         }
 
         return true
@@ -129,6 +152,51 @@ export const useAuthStore = defineStore('auth', () => {
     return false
   })
 
+  // Rafraîchir l'état d'authentification depuis le localStorage/sessionStorage
+  function refreshAuth() {
+    console.log("[AUTH] Rafraîchissement de l'authentification")
+    // Nettoyage des états actuels
+    token.value = null
+    currentUser.value = null
+
+    // Récupérer le token
+    const tokenFromStorage = localStorage.getItem('token') || sessionStorage.getItem('token')
+    if (tokenFromStorage) {
+      token.value = tokenFromStorage
+      console.log('[AUTH] Token récupéré:', tokenFromStorage.substring(0, 15) + '...')
+    }
+
+    // Récupérer les données utilisateur
+    const userFromStorage = localStorage.getItem('user') || sessionStorage.getItem('user')
+    if (userFromStorage) {
+      try {
+        const userData = JSON.parse(userFromStorage)
+        currentUser.value = userData
+        console.log('[AUTH] Utilisateur récupéré:', userData)
+
+        // Vérifier si l'utilisateur a le rôle admin
+        const isAdminUser = userData.isAdmin === true || userData.role === 'admin'
+        console.log("[AUTH] L'utilisateur est admin:", isAdminUser)
+
+        // Si l'utilisateur n'est pas un admin mais que c'est requis, afficher un avertissement
+        if (!isAdminUser) {
+          console.warn("[AUTH] L'utilisateur n'a pas les droits administrateur nécessaires pour certaines opérations")
+        }
+      } catch (e) {
+        console.error('[AUTH] Erreur lors de la récupération des données utilisateur:', e)
+
+        // Si le JSON est invalide, supprimer le token et l'utilisateur
+        localStorage.removeItem('user')
+        sessionStorage.removeItem('user')
+        localStorage.removeItem('token')
+        sessionStorage.removeItem('token')
+        token.value = null
+      }
+    }
+
+    return isAuthenticated.value
+  }
+
   // Initialiser l'état à la création du store
   init()
 
@@ -145,5 +213,6 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     logout,
     init,
+    refreshAuth,
   }
 })

@@ -8,6 +8,9 @@ import { LoungesModule } from './lounges/lounges.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { AuthModule } from './auth/auth.module';
+import { UploadsModule } from './uploads/uploads.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -24,17 +27,23 @@ import { AuthModule } from './auth/auth.module';
         password: configService.get('DB_PASSWORD', 'Motdep@sse/2022'),
         database: configService.get('DB_DATABASE', 'u527740812_lounge_db'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: configService.get('NODE_ENV', 'development') === 'development',
+        synchronize:
+          configService.get('NODE_ENV', 'development') === 'development',
         charset: 'utf8mb4',
         collation: 'utf8mb4_unicode_ci',
       }),
       inject: [ConfigService],
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
     }),
     UsersModule,
     LoungesModule,
     BookingsModule,
     SubscriptionsModule,
     AuthModule,
+    UploadsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

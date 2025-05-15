@@ -92,21 +92,30 @@ const submit = async () => {
 
         // Si "Rester connecté" est coché, stocker dans localStorage
         if (formData.keepLoggedIn) {
+          // S'assurer que nous stockons correctement l'objet user
           localStorage.setItem('user', JSON.stringify(userData.user || userData))
-          // Stocker également le token JWT
+          // Stocker également le token JWT sans le wrapper JSON
           if (userData.token) {
             localStorage.setItem('token', userData.token)
           }
         } else {
           // Sinon, utiliser sessionStorage qui persiste uniquement pour la session
           sessionStorage.setItem('user', JSON.stringify(userData.user || userData))
-          // Stocker également le token JWT
+          // Stocker également le token JWT sans le wrapper JSON
           if (userData.token) {
             sessionStorage.setItem('token', userData.token)
           }
         }
 
+        // Debug - voir ce qui est stocké
+        console.log('User stocké:', JSON.stringify(userData.user || userData))
+        console.log('Token stocké:', userData.token)
+        console.log('isAdmin:', (userData.user || userData).isAdmin)
+
         init({ message: 'Vous êtes connecté avec succès', color: 'success' })
+
+        // Forcer le rafraîchissement de l'authentification
+        authStore.refreshAuth()
 
         // Utiliser le paramètre de redirection de l'URL si disponible
         const redirectPath = route.query.redirect as string

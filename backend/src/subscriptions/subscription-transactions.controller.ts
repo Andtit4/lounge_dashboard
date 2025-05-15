@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { SubscriptionsService } from './subscriptions.service';
 import { CreateSubscriptionTransactionDto } from './dto/create-subscription-transaction.dto';
 import { UpdateSubscriptionTransactionDto } from './dto/update-subscription-transaction.dto';
@@ -11,14 +20,26 @@ export class SubscriptionTransactionsController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new subscription transaction' })
-  @ApiResponse({ status: 201, description: 'Transaction successfully created.' })
-  createTransaction(@Body() createSubscriptionTransactionDto: CreateSubscriptionTransactionDto) {
-    return this.subscriptionsService.createTransaction(createSubscriptionTransactionDto);
+  @ApiResponse({
+    status: 201,
+    description: 'Transaction successfully created.',
+  })
+  createTransaction(
+    @Body() createSubscriptionTransactionDto: CreateSubscriptionTransactionDto,
+  ) {
+    return this.subscriptionsService.createTransaction(
+      createSubscriptionTransactionDto,
+    );
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all subscription transactions or transactions by user' })
-  @ApiResponse({ status: 200, description: 'Return all transactions or user transactions.' })
+  @ApiOperation({
+    summary: 'Get all subscription transactions or transactions by user',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Return all transactions or user transactions.',
+  })
   findAllTransactions(@Query('userId') userId?: string) {
     if (userId) {
       return this.subscriptionsService.findTransactionsByUser(userId);
@@ -36,20 +57,29 @@ export class SubscriptionTransactionsController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a subscription transaction' })
-  @ApiResponse({ status: 200, description: 'Transaction successfully updated.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Transaction successfully updated.',
+  })
   @ApiResponse({ status: 404, description: 'Transaction not found.' })
   updateTransaction(
-    @Param('id') id: string, 
-    @Body() updateSubscriptionTransactionDto: UpdateSubscriptionTransactionDto
+    @Param('id') id: string,
+    @Body() updateSubscriptionTransactionDto: UpdateSubscriptionTransactionDto,
   ) {
-    return this.subscriptionsService.updateTransaction(id, updateSubscriptionTransactionDto);
+    return this.subscriptionsService.updateTransaction(
+      id,
+      updateSubscriptionTransactionDto,
+    );
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a subscription transaction' })
-  @ApiResponse({ status: 200, description: 'Transaction successfully deleted.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Transaction successfully deleted.',
+  })
   @ApiResponse({ status: 404, description: 'Transaction not found.' })
   removeTransaction(@Param('id') id: string) {
     return this.subscriptionsService.removeTransaction(id);
   }
-} 
+}

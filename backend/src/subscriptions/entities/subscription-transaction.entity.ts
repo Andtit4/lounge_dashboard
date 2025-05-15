@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 
 @Entity('subscription_transactions')
@@ -31,7 +39,11 @@ export class SubscriptionTransaction {
   @Column({ type: 'datetime' })
   endDate: Date;
 
-  @Column({ type: 'enum', enum: ['pending', 'completed', 'failed', 'refunded'], default: 'pending' })
+  @Column({
+    type: 'enum',
+    enum: ['pending', 'completed', 'failed', 'refunded'],
+    default: 'pending',
+  })
   status: string;
 
   @Column({ nullable: true, type: 'text' })
@@ -42,4 +54,4 @@ export class SubscriptionTransaction {
 
   @UpdateDateColumn()
   updatedAt: Date;
-} 
+}

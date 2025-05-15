@@ -1,5 +1,5 @@
 // Utilisez cette URL directement si la variable d'environnement n'est pas définie
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:6610'
 
 // Log l'URL de base pour débogage
 console.log('[API] Base URL:', apiBaseUrl)
@@ -47,6 +47,7 @@ export default {
   deleteLounge: (id: string) => logEndpoint('deleteLounge', `${apiBaseUrl}/lounges/${id}`),
   loungeAnalytics: () => logEndpoint('loungeAnalytics', `${apiBaseUrl}/lounges/analytics`),
   loungeStats: (id: string) => logEndpoint('loungeStats', `${apiBaseUrl}/lounges/${id}/stats`),
+  uploadLoungeImage: (id: string) => logEndpoint('uploadLoungeImage', `${apiBaseUrl}/lounges/${id}/upload-image`),
 
   // Réservations
   bookings: () => logEndpoint('bookings', `${apiBaseUrl}/bookings`), // Utilisez cet endpoint au lieu de /api/bookings

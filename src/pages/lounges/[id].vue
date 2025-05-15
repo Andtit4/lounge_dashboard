@@ -16,10 +16,11 @@
     <div class="lounge-header mb-6">
       <div
         class="lounge-cover-image"
-        :style="`background-image: url(${
-          lounge.imageUrl ||
-          'https://images.unsplash.com/photo-1566196544088-7891620c9d95?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80'
-        })`"
+        :style="{
+          backgroundImage: `url(${getFullImageUrl(lounge.imageUrl) || 'https://images.unsplash.com/photo-1566196544088-7891620c9d95?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80'})`,
+          backgroundPosition: 'center',
+          backgroundSize: 'cover',
+        }"
       >
         <div class="lounge-header-overlay">
           <h1 class="lounge-title">{{ lounge.name }}</h1>
@@ -309,11 +310,60 @@ const submitBooking = async () => {
 }
 
 // Charger les données au montage du composant
-onMounted(async () => {
-  const id = route.params.id as string
-  await loungeStore.fetchLoungeById(id)
-  isLoading.value = false
+onMounted(() => {
+  // Récupérer les données du salon depuis l'API
+  const loungeId = route.params.id as string
+  console.log(`[LOUNGE DETAILS] Chargement du salon: ${loungeId}`)
+  fetchLoungeData(loungeId)
 })
+
+const fetchLoungeData = async (id: string) => {
+  try {
+    isLoading.value = true
+    await loungeStore.fetchLoungeById(id)
+    
+    // Log pour débogage
+    console.log('[LOUNGE DETAILS] Salon chargé:', lounge.value)
+    if (lounge.value) {
+      console.log('[LOUNGE DETAILS] URL image du salon:', lounge.value.imageUrl)
+      // Tentative de débogage de l'image
+      if (lounge.value.imageUrl) {
+        // Vérifie si l'URL de l'image est accessible
+        const img = new Image()
+        img.onload = () => console.log('[LOUNGE DETAILS] L\'image a été chargée avec succès')
+        img.onerror = () => console.error('[LOUNGE DETAILS] Erreur de chargement de l\'image:', lounge.value?.imageUrl)
+        img.src = lounge.value.imageUrl
+      }
+    }
+  } catch (err) {
+    console.error('[LOUNGE DETAILS] Erreur lors du chargement du salon:', err)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const getFullImageUrl = (imageUrl?: string) => {
+  if (!imageUrl) return null
+  
+  // Si l'URL est déjà complète, la retourner telle quelle
+  if (imageUrl.startsWith('http')) return imageUrl
+  
+  // Si c'est une URL relative commençant par un slash
+  if (imageUrl.startsWith('/')) {
+    // Récupérer la base de l'API depuis la configuration
+    const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:6610'
+    return `${apiBase}${imageUrl}`
+  }
+  
+  // Si c'est une URL relative ne commençant pas par un slash
+  if (!imageUrl.startsWith('/')) {
+    const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:6610'
+    return `${apiBase}/${imageUrl}`
+  }
+  
+  // Fallback au cas où rien ne correspond
+  return `http://localhost:6610/${imageUrl}`
+}
 </script>
 
 <style scoped>
