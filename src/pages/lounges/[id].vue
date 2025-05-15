@@ -17,7 +17,10 @@
       <div
         class="lounge-cover-image"
         :style="{
-          backgroundImage: `url(${getFullImageUrl(lounge.imageUrl) || 'https://images.unsplash.com/photo-1566196544088-7891620c9d95?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80'})`,
+          backgroundImage: `url(${
+            getFullImageUrl(lounge.imageUrl) ||
+            'https://images.unsplash.com/photo-1566196544088-7891620c9d95?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80'
+          })`,
           backgroundPosition: 'center',
           backgroundSize: 'cover',
         }"
@@ -321,7 +324,7 @@ const fetchLoungeData = async (id: string) => {
   try {
     isLoading.value = true
     await loungeStore.fetchLoungeById(id)
-    
+
     // Log pour débogage
     console.log('[LOUNGE DETAILS] Salon chargé:', lounge.value)
     if (lounge.value) {
@@ -330,8 +333,8 @@ const fetchLoungeData = async (id: string) => {
       if (lounge.value.imageUrl) {
         // Vérifie si l'URL de l'image est accessible
         const img = new Image()
-        img.onload = () => console.log('[LOUNGE DETAILS] L\'image a été chargée avec succès')
-        img.onerror = () => console.error('[LOUNGE DETAILS] Erreur de chargement de l\'image:', lounge.value?.imageUrl)
+        img.onload = () => console.log("[LOUNGE DETAILS] L'image a été chargée avec succès")
+        img.onerror = () => console.error("[LOUNGE DETAILS] Erreur de chargement de l'image:", lounge.value?.imageUrl)
         img.src = lounge.value.imageUrl
       }
     }
@@ -344,23 +347,23 @@ const fetchLoungeData = async (id: string) => {
 
 const getFullImageUrl = (imageUrl?: string) => {
   if (!imageUrl) return null
-  
+
   // Si l'URL est déjà complète, la retourner telle quelle
   if (imageUrl.startsWith('http')) return imageUrl
-  
+
   // Si c'est une URL relative commençant par un slash
   if (imageUrl.startsWith('/')) {
     // Récupérer la base de l'API depuis la configuration
     const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:6610'
     return `${apiBase}${imageUrl}`
   }
-  
+
   // Si c'est une URL relative ne commençant pas par un slash
   if (!imageUrl.startsWith('/')) {
     const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:6610'
     return `${apiBase}/${imageUrl}`
   }
-  
+
   // Fallback au cas où rien ne correspond
   return `http://localhost:6610/${imageUrl}`
 }

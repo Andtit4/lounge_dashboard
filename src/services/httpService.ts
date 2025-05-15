@@ -295,8 +295,8 @@ export default {
       const headers: HeadersInit = {
         'Content-Type': 'application/json',
         'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'
+        Pragma: 'no-cache',
+        Expires: '0',
       }
 
       // Ajouter le token d'authentification s'il existe
@@ -323,8 +323,8 @@ export default {
       }
 
       // Tenter de parser la réponse JSON, mais gérer le cas où la réponse est vide
-      let responseText = await response.text()
-      
+      const responseText = await response.text()
+
       // Si la réponse est vide ou contient juste des espaces blancs
       if (!responseText || responseText.trim() === '') {
         console.log(`[HTTP] DELETE response is empty, treating as success`)

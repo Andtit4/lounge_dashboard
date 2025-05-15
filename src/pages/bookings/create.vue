@@ -138,7 +138,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useBookingStore } from '../../stores/booking'
 import { useLoungeStore } from '../../stores/lounge'
 import { useAuthStore } from '../../stores/auth'
-import type { Lounge, CreateBookingDto } from '../../types'
+import type { CreateBookingDto } from '../../types'
 
 const route = useRoute()
 const router = useRouter()

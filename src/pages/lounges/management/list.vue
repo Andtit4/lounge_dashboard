@@ -12,7 +12,7 @@
             </VaInput>
           </div>
           <div class="flex xs12 md6 lg8 text-right">
-            <VaButton color="primary" icon="refresh" class="mr-2" @click="forceRefreshLounges" :loading="loading">
+            <VaButton color="primary" icon="refresh" class="mr-2" :loading="loading" @click="forceRefreshLounges">
               Rafraîchir
             </VaButton>
             <VaButton color="success" icon="add" :to="{ name: 'lounges-create' }"> Ajouter un salon </VaButton>
@@ -86,10 +86,9 @@
 import { ref, onMounted, watch, onActivated, onBeforeMount } from 'vue'
 import { useLoungeStore } from '../../../stores/lounge'
 import type { Lounge } from '../../../types'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 
 const route = useRoute()
-const router = useRouter()
 const loungeStore = useLoungeStore()
 const { lounges, loading, error } = loungeStore
 
@@ -97,7 +96,7 @@ const searchQuery = ref('')
 const showDeleteModal = ref(false)
 const loungeToDelete = ref<Lounge | null>(null)
 
-// Force un rechargement complet des données au chargement de la page 
+// Force un rechargement complet des données au chargement de la page
 // et avant même que le composant soit monté
 onBeforeMount(async () => {
   console.log('[LOUNGES-LIST] Avant montage du composant, chargement des salons...')
@@ -111,10 +110,13 @@ onActivated(async () => {
 })
 
 // Surveiller les changements de route pour recharger les données
-watch(() => route.fullPath, async () => {
-  console.log('[LOUNGES-LIST] Changement de route détecté, rechargement des données...')
-  await refreshLoungesList()
-})
+watch(
+  () => route.fullPath,
+  async () => {
+    console.log('[LOUNGES-LIST] Changement de route détecté, rechargement des données...')
+    await refreshLoungesList()
+  },
+)
 
 // Fonction pour rafraîchir la liste des salons
 const refreshLoungesList = async () => {
@@ -153,19 +155,19 @@ const deleteLounge = async () => {
   if (loungeToDelete.value) {
     try {
       console.log('[LOUNGES-LIST] Suppression du salon:', loungeToDelete.value.name)
-      
+
       // Attendre que la suppression soit terminée
       const result = await loungeStore.deleteLounge(loungeToDelete.value.id)
-      
+
       if (result) {
         console.log('[LOUNGES-LIST] Salon supprimé avec succès')
         // Fermer la modale de confirmation
         showDeleteModal.value = false
-        
+
         // Force un rafraîchissement complet des données depuis le serveur
         console.log('[LOUNGES-LIST] Rafraîchissement de la liste après suppression...')
         await loungeStore.fetchLounges(true)
-        
+
         // Afficher une confirmation
         alert('Le salon a été supprimé avec succès.')
       } else {

@@ -7,8 +7,6 @@ import gb from './locales/gb.json'
 import ir from './locales/ir.json'
 import fr from './locales/fr.json'
 
-type MessageSchema = typeof gb
-
 const messages = {
   br,
   cn,

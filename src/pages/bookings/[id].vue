@@ -190,7 +190,6 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useBookingStore } from '../../stores/booking'
 import { useAuthStore } from '../../stores/auth'
-import type { Booking } from '../../types'
 
 const route = useRoute()
 const router = useRouter()

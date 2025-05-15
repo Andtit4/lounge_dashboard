@@ -1,5 +1,5 @@
 // Utilisez cette URL directement si la variable d'environnement n'est pas définie
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:6610'
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://185.97.146.99:6610'
 
 // Log l'URL de base pour débogage
 console.log('[API] Base URL:', apiBaseUrl)

@@ -2,7 +2,7 @@ import axios from 'axios'
 import type { AxiosResponse } from 'axios'
 
 // URL de base de l'API backend
-const API_URL = 'http://localhost:6610'
+const API_URL = 'http://185.97.146.99:6610'
 
 // Configuration d'Axios avec des logs
 const apiClient = axios.create({

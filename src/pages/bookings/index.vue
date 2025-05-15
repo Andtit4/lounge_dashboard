@@ -108,18 +108,14 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useBookingStore } from '../../stores/booking'
-import { useLoungeStore } from '../../stores/lounge'
-import { useAuthStore } from '../../stores/auth'
 import type { Booking } from '../../types'
 
 const route = useRoute()
 const router = useRouter()
 const bookingStore = useBookingStore()
-const loungeStore = useLoungeStore()
-const authStore = useAuthStore()
 
 // État local
 const showSuccessAlert = ref(false)

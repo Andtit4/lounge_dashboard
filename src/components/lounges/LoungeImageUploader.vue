@@ -124,14 +124,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, watch, computed } from 'vue'
-import axios from 'axios'
+import { ref, onMounted, watch } from 'vue'
 import api from '../../services/api'
-import { useAuthStore } from '../../stores/auth'
-import httpService, { axiosInstance } from '../../services/httpService'
+import httpService from '../../services/httpService'
 
 const props = defineProps<{
-  loungeId: string
+  loungeId?: string
   initialImageUrl?: string
 }>()
 
@@ -141,7 +139,6 @@ const emit = defineEmits<{
   'upload-error': [error: any]
 }>()
 
-const authStore = useAuthStore()
 const currentImageUrl = ref(props.initialImageUrl || '')
 const urlInput = ref(props.initialImageUrl || '')
 const tempImageFile = ref<File | null>(null)
@@ -307,38 +304,38 @@ const handleUpload = async () => {
 
     // Log details of the response
     console.log('[IMAGE UPLOADER] Réponse du serveur:', response)
-    
+
     if (response.data && response.data.url) {
       // S'assurer que l'URL est complète avant de l'émettre
       let imageUrl = response.data.url
-      
+
       // Corriger l'URL si elle est relative
       if (!imageUrl.startsWith('http')) {
         const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:6610'
-        
+
         if (imageUrl.startsWith('/')) {
           imageUrl = `${apiBaseUrl}${imageUrl}`
         } else {
           imageUrl = `${apiBaseUrl}/${imageUrl}`
         }
-        
+
         console.log('[IMAGE UPLOADER] URL corrigée:', imageUrl)
       }
-      
+
       // Mettre à jour les variables locales
       currentImageUrl.value = imageUrl
       tempImageFile.value = null
       tempImagePreview.value = null
       urlInput.value = imageUrl
-      
+
       isUploading.value = false
       successMessage.value = 'Image uploadée avec succès'
       error.value = ''
-      
+
       // Émettre l'URL complète
       emit('update:image-url', imageUrl)
       emit('upload-success', response.data)
-      
+
       return imageUrl
     } else {
       throw new Error('Données de réponse incomplètes ou invalides')

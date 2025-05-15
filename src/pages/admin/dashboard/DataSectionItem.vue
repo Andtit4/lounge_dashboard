@@ -24,9 +24,10 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
 import { VaCard } from 'vuestic-ui'
 
+// props est nécessaire pour le template, même s'il n'est pas utilisé directement dans le script
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = defineProps<{
   title: string
   value: string | number
@@ -36,11 +37,6 @@ const props = defineProps<{
   iconColor: string
   trendColor: string
 }>()
-
-const changeClass = computed(() => ({
-  'text-success': props.up,
-  'text-red-600': !props.up,
-}))
 </script>
 
 <style scoped>

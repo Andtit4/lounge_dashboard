@@ -120,6 +120,7 @@ or [Linkedin](https://www.linkedin.com/company/18509340)
 ## Déploiement sur VPS
 
 ### Prérequis
+
 - Un VPS avec Ubuntu 20.04 ou plus récent
 - Node.js (v16+) et npm installés sur le VPS
 - PM2 installé globalement (`npm install -g pm2`)
@@ -130,12 +131,14 @@ or [Linkedin](https://www.linkedin.com/company/18509340)
 ### Étapes de déploiement manuel
 
 1. **Cloner le dépôt sur votre VPS**
+
    ```bash
    git clone https://github.com/votre-username/lounge_dashboard.git
    cd lounge_dashboard
    ```
 
 2. **Installer les dépendances et construire l'API**
+
    ```bash
    cd backend
    npm install
@@ -143,15 +146,18 @@ or [Linkedin](https://www.linkedin.com/company/18509340)
    ```
 
 3. **Configurer les variables d'environnement**
+
    - Créez un fichier `.env` dans le dossier `backend` avec les variables nécessaires ou utilisez celles définies dans `ecosystem.config.js`
 
 4. **Démarrer l'API avec PM2**
+
    ```bash
    cd ..  # Retour au dossier principal
    pm2 start ecosystem.config.js --env production
    ```
 
 5. **Vérifier que l'API fonctionne**
+
    ```bash
    pm2 status
    curl http://localhost:6610/api/health
@@ -170,6 +176,7 @@ or [Linkedin](https://www.linkedin.com/company/18509340)
 
 2. **Personnaliser le fichier ecosystem.config.js**
    Modifiez les paramètres suivants dans le fichier `ecosystem.config.js` :
+
    - `user`: Votre nom d'utilisateur SSH
    - `host`: L'adresse IP ou le nom d'hôte de votre VPS
    - `repo`: URL de votre dépôt git
@@ -177,11 +184,13 @@ or [Linkedin](https://www.linkedin.com/company/18509340)
    - variables d'environnement dans la section `env`
 
 3. **Configurer le serveur de déploiement (première fois uniquement)**
+
    ```bash
    pm2 deploy ecosystem.config.js production setup
    ```
 
 4. **Déployer l'application**
+
    ```bash
    pm2 deploy ecosystem.config.js production
    ```
@@ -197,17 +206,20 @@ or [Linkedin](https://www.linkedin.com/company/18509340)
 Pour exposer votre API sur le web, configurez Nginx comme proxy inverse :
 
 1. **Installer Nginx**
+
    ```bash
    sudo apt update
    sudo apt install nginx
    ```
 
 2. **Créer une configuration de site pour votre API**
+
    ```bash
    sudo nano /etc/nginx/sites-available/lounge-api
    ```
 
 3. **Ajouter la configuration suivante**
+
    ```nginx
    server {
        listen 80;
@@ -225,6 +237,7 @@ Pour exposer votre API sur le web, configurez Nginx comme proxy inverse :
    ```
 
 4. **Activer le site et redémarrer Nginx**
+
    ```bash
    sudo ln -s /etc/nginx/sites-available/lounge-api /etc/nginx/sites-enabled/
    sudo nginx -t

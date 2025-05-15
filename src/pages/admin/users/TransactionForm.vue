@@ -1,8 +1,20 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import type { IUser } from '../../../services/api/userService'
-import type { ISubscriptionTransaction } from '../../../services/api/subscriptionService'
-import { formatDate } from '../../../utils/formatters'
+
+// Définir l'interface pour les transactions d'abonnement
+interface ISubscriptionTransaction {
+  id: string
+  userId: string
+  subscriptionType: string
+  amount: number
+  paymentMethod: string
+  transactionDate: string
+  startDate: string
+  endDate: string
+  status: string
+  notes?: string
+}
 
 // Props
 const props = defineProps({

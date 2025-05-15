@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import type { IUser } from '../../../services/api/userService'
-import { formatDate } from '../../../utils/formatters'
 
 // Définition des props
 const props = defineProps({

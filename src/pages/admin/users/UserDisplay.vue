@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { computed, onMounted, watch, ref } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import { useUserStore } from '../../../stores/userStore'
 import type { IUser } from '../../../services/api/userService'
-import { formatDate } from '../../../utils/formatters'
 import {
   formatSubscriptionDate,
   getSubscriptionStatus,

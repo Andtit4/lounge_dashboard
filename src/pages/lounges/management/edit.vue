@@ -131,8 +131,8 @@
             formData.imageUrl = $event
             updateLoungeImage($event)
           "
-          @upload-success="handleUploadSuccess"
-          @upload-error="handleUploadError"
+          @uploadSuccess="handleUploadSuccess"
+          @uploadError="handleUploadError"
         />
       </VaCardContent>
     </VaCard>

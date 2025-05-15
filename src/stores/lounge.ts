@@ -26,18 +26,20 @@ export const useLoungeStore = defineStore('lounge', () => {
 
     try {
       console.log('[LOUNGE-STORE] Récupération de la liste des salons', forceRefresh ? '(forcée)' : '')
-      
+
       // Configuration pour forcer une requête fraîche et contourner le cache si nécessaire
-      const config = forceRefresh ? {
-        headers: {
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache',
-          'Expires': '0',
-        }
-      } : undefined
-      
+      const config = forceRefresh
+        ? {
+            headers: {
+              'Cache-Control': 'no-cache',
+              Pragma: 'no-cache',
+              Expires: '0',
+            },
+          }
+        : undefined
+
       const response = await httpService.get<Lounge[]>(api.lounges(), config)
-      
+
       if (response.data) {
         console.log('[LOUNGE-STORE] Salons récupérés avec succès:', response.data.length)
         lounges.value = response.data
@@ -232,29 +234,31 @@ export const useLoungeStore = defineStore('lounge', () => {
     try {
       const response = await httpService.delete<Lounge>(api.deleteLounge(id))
       console.log(`[LOUNGE-STORE] Réponse de suppression:`, response)
-      
+
       // La suppression est considérée comme réussie si:
       // 1. Une réponse avec données est reçue
       // 2. Ou aucune erreur n'est retournée
       // 3. Ou le statut HTTP est 204 (No Content)
       if (response.data || !response.error || response.statusCode === 204) {
         console.log(`[LOUNGE-STORE] Suppression du salon réussie`)
-        
+
         // Supprimer le salon de la liste des salons
         const index = lounges.value.findIndex((lounge) => lounge.id === id)
         if (index !== -1) {
           console.log(`[LOUNGE-STORE] Suppression du salon de la liste locale à l'index:`, index)
           lounges.value.splice(index, 1)
         } else {
-          console.warn(`[LOUNGE-STORE] Le salon n'a pas été trouvé dans la liste locale. Un rafraîchissement est nécessaire.`)
+          console.warn(
+            `[LOUNGE-STORE] Le salon n'a pas été trouvé dans la liste locale. Un rafraîchissement est nécessaire.`,
+          )
         }
-        
+
         // Si le salon supprimé est le salon courant, le réinitialiser
         if (currentLounge.value && currentLounge.value.id === id) {
           console.log(`[LOUNGE-STORE] Réinitialisation du salon courant`)
           currentLounge.value = null
         }
-        
+
         return true
       } else if (response.error) {
         console.error(`[LOUNGE-STORE] Erreur lors de la suppression:`, response.error.message)

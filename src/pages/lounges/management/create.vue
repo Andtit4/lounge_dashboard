@@ -164,7 +164,7 @@
                       </div>
 
                       <!-- Aperçu de l'image sélectionnée -->
-                      <div v-if="tempImageFile" class="mb-4">
+                      <div v-if="tempImageFile && tempImagePreview" class="mb-4">
                         <div class="image-preview rounded-lg overflow-hidden border border-gray-200">
                           <img :src="tempImagePreview" alt="Aperçu de l'image" class="w-full h-auto" />
                           <div class="mt-3 flex">
@@ -262,7 +262,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLoungeStore } from '../../../stores/lounge'
 import type { CreateLoungeDto } from '../../../types'
@@ -310,6 +310,33 @@ const errors = reactive({
   premiumDiscountPrice: '',
   imageUrl: '',
 })
+
+// Fonction pour initialiser le formulaire
+const initializeFormData = () => {
+  // Réinitialiser les données du formulaire
+  formData.name = ''
+  formData.location = ''
+  formData.airport = ''
+  formData.country = ''
+  formData.description = ''
+  formData.price = 0
+  formData.classicDiscountPrice = 0
+  formData.premiumDiscountPrice = 0
+  formData.imageUrl = ''
+
+  // Réinitialiser les erreurs
+  Object.keys(errors).forEach((key) => {
+    errors[key as keyof typeof errors] = ''
+  })
+
+  // Réinitialiser les autres états
+  tempImageFile.value = null
+  tempImagePreview.value = null
+  isDragging.value = false
+  apiError.value = ''
+  error.value = null
+  imageUrlLoadError.value = false
+}
 
 // Déclencement de l'input fichier
 const triggerFileInput = () => {
@@ -450,8 +477,8 @@ const uploadImage = async (loungeId: string): Promise<string | null> => {
   // Vérifier que le fichier a bien été ajouté au FormData
   const fileFromFormData = formData.get('file')
   if (!fileFromFormData) {
-    console.error('[UPLOAD] ERREUR: Le fichier n\'a pas été correctement ajouté au FormData')
-    apiError.value = 'Erreur lors de la préparation du fichier pour l\'upload'
+    console.error("[UPLOAD] ERREUR: Le fichier n'a pas été correctement ajouté au FormData")
+    apiError.value = "Erreur lors de la préparation du fichier pour l'upload"
     return null
   } else {
     console.log('[UPLOAD] Le fichier a bien été ajouté au FormData:', fileFromFormData)
@@ -460,97 +487,93 @@ const uploadImage = async (loungeId: string): Promise<string | null> => {
   try {
     // Récupérer le token d'authentification
     let token = authStore.token
-    
+
     if (!token) {
-      console.error('[UPLOAD] Aucun token d\'authentification trouvé dans authStore')
-      
+      console.error("[UPLOAD] Aucun token d'authentification trouvé dans authStore")
+
       // Vérifier aussi dans localStorage/sessionStorage comme fallback
       const storageToken = localStorage.getItem('token') || sessionStorage.getItem('token')
       if (storageToken) {
         token = storageToken
         console.log('[UPLOAD] Token trouvé dans le storage:', token.substring(0, 15) + '...')
       } else {
-        throw new Error('Aucun token d\'authentification trouvé')
+        throw new Error("Aucun token d'authentification trouvé")
       }
     }
-    
+
     // Log pour déboguer
-    console.log('[UPLOAD] Token utilisé pour l\'upload:', token.substring(0, 15) + '...')
-    console.log('[UPLOAD] URL de l\'API:', api.uploadLoungeImage(loungeId))
-    
+    console.log("[UPLOAD] Token utilisé pour l'upload:", token.substring(0, 15) + '...')
+    console.log("[UPLOAD] URL de l'API:", api.uploadLoungeImage(loungeId))
+
     // Récupérer l'user pour ajouter X-Admin-Role si nécessaire
     const userJson = localStorage.getItem('user') || sessionStorage.getItem('user')
     let isAdminUser = false
-    
+
     if (userJson) {
       try {
         const user = JSON.parse(userJson)
         isAdminUser = user.isAdmin === true || user.role === 'admin'
-        console.log('[UPLOAD] L\'utilisateur est admin:', isAdminUser)
+        console.log("[UPLOAD] L'utilisateur est admin:", isAdminUser)
       } catch (e) {
         console.error('[UPLOAD] Erreur lors de la lecture des données user:', e)
       }
     }
-    
+
     // Préparer les en-têtes avec token correctement formaté
     const headers = {
       'Content-Type': 'multipart/form-data',
-      'Authorization': formatAuthHeader(token),
-      'X-Admin-Role': 'true'  // Toujours ajouter ce header pour l'upload
+      Authorization: formatAuthHeader(token),
+      'X-Admin-Role': 'true', // Toujours ajouter ce header pour l'upload
     }
-    
+
     console.log('[UPLOAD] En-têtes:', headers)
-    
+
     // Utiliser axios directement pour avoir plus de contrôle
-    const response = await axios.post(
-      api.uploadLoungeImage(loungeId),
-      formData,
-      { 
-        headers,
-        onUploadProgress: (progressEvent) => {
-          console.log(`[UPLOAD] Progression: ${Math.round((progressEvent.loaded * 100) / progressEvent.total!)}%`)
-        }
-      }
-    )
+    const response = await axios.post(api.uploadLoungeImage(loungeId), formData, {
+      headers,
+      onUploadProgress: (progressEvent) => {
+        console.log(`[UPLOAD] Progression: ${Math.round((progressEvent.loaded * 100) / progressEvent.total!)}%`)
+      },
+    })
 
     console.log('[UPLOAD] Réponse upload:', response)
     console.log('[UPLOAD] Statut de la réponse:', response.status)
     console.log('[UPLOAD] Données de la réponse:', response.data)
-    
+
     // Vérifier si la requête a réussi
     if (response.data && response.data.success === false) {
-      console.error('[UPLOAD] Échec de l\'upload côté serveur:', response.data.message)
-      apiError.value = response.data.message || 'Erreur lors de l\'upload de l\'image côté serveur'
+      console.error("[UPLOAD] Échec de l'upload côté serveur:", response.data.message)
+      apiError.value = response.data.message || "Erreur lors de l'upload de l'image côté serveur"
       return null
     }
-    
+
     // Vérifier si l'URL est présente
     if (!response.data || !response.data.url) {
       console.error('[UPLOAD] Réponse sans URL:', response.data)
-      apiError.value = 'L\'upload a réussi mais l\'URL de l\'image est manquante'
+      apiError.value = "L'upload a réussi mais l'URL de l'image est manquante"
       return null
     }
-    
+
     // S'assurer que l'URL est complète
     let imageUrl = response.data.url
-    
+
     // Corriger l'URL si elle est relative
     if (!imageUrl.startsWith('http')) {
-      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:6610'
-      
+      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://185.97.146.99:6610'
+
       if (imageUrl.startsWith('/')) {
         imageUrl = `${apiBaseUrl}${imageUrl}`
       } else {
         imageUrl = `${apiBaseUrl}/${imageUrl}`
       }
-      
+
       console.log('[UPLOAD] URL corrigée:', imageUrl)
     }
-    
+
     return imageUrl
   } catch (err: any) {
-    console.error('[UPLOAD] Erreur détaillée lors de l\'upload de l\'image:', err)
-    
+    console.error("[UPLOAD] Erreur détaillée lors de l'upload de l'image:", err)
+
     // Afficher les détails de l'erreur de manière structurée
     if (err.response) {
       console.error('[UPLOAD] Statut de la réponse:', err.response.status)
@@ -559,10 +582,10 @@ const uploadImage = async (loungeId: string): Promise<string | null> => {
     } else if (err.request) {
       console.error('[UPLOAD] Requête sans réponse:', err.request)
     } else {
-      console.error('[UPLOAD] Message d\'erreur:', err.message)
+      console.error("[UPLOAD] Message d'erreur:", err.message)
     }
-    
-    apiError.value = err.response?.data?.message || err.message || 'Erreur lors de l\'upload de l\'image'
+
+    apiError.value = err.response?.data?.message || err.message || "Erreur lors de l'upload de l'image"
     return null
   }
 }
@@ -609,45 +632,6 @@ const checkBackendConnection = async (): Promise<boolean> => {
   }
 }
 
-// Vérifier les droits d'accès auprès du backend
-const checkAdminAccess = async (): Promise<boolean> => {
-  try {
-    console.log("[CREATE] Vérification des droits d'accès admin auprès du backend...")
-
-    // Récupérer le token
-    const token = authStore.token || localStorage.getItem('token') || sessionStorage.getItem('token')
-    if (!token) {
-      console.error('[CREATE] Pas de token disponible pour vérifier les droits')
-      return false
-    }
-
-    // Tenter d'accéder à un endpoint qui nécessite des droits admin, comme les statistiques
-    const response = await fetch(api.loungeAnalytics(), {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    })
-
-    console.log(`[CREATE] Réponse de vérification des droits: ${response.status}`)
-
-    if (response.ok) {
-      console.log("[CREATE] L'utilisateur a les droits admin nécessaires")
-      return true
-    } else if (response.status === 403) {
-      console.error("[CREATE] L'utilisateur n'a pas les droits admin (403 Forbidden)")
-      return false
-    } else {
-      console.error(`[CREATE] Erreur lors de la vérification des droits: ${response.status}`)
-      return false
-    }
-  } catch (err) {
-    console.error('[CREATE] Exception lors de la vérification des droits admin:', err)
-    return false
-  }
-}
-
 // Créer une entrée de test dans la base de données locale
 const createTestLounge = async (): Promise<boolean> => {
   try {
@@ -675,7 +659,7 @@ const createTestLounge = async (): Promise<boolean> => {
     }
 
     // Faire une requête directe au backend
-    const directResponse = await fetch('http://localhost:6610/lounges', {
+    const directResponse = await fetch('http://185.97.146.99:6610/lounges', {
       method: 'POST',
       headers,
       body: JSON.stringify(preparedData),
@@ -770,7 +754,10 @@ const submitForm = async () => {
       'classicDiscountPrice',
       'premiumDiscountPrice',
     ]
-    const missingFields = requiredFields.filter((field) => !preparedData[field] && preparedData[field] !== 0)
+    const missingFields = requiredFields.filter((field) => {
+      const value = field in preparedData ? preparedData[field as keyof typeof preparedData] : undefined
+      return value === undefined || (typeof value === 'string' && value === '')
+    })
 
     if (missingFields.length > 0) {
       apiError.value = `Champs obligatoires manquants: ${missingFields.join(', ')}`
@@ -781,7 +768,7 @@ const submitForm = async () => {
     // Créer le salon directement avec fetch pour contourner d'éventuels problèmes avec le store
     try {
       console.log('[CREATE] Tentative directe avec fetch')
-      const directResponse = await fetch('http://localhost:6610/lounges', {
+      const directResponse = await fetch('http://185.97.146.99:6610/lounges', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -827,7 +814,7 @@ const submitForm = async () => {
             // Rafraîchir la liste des salons avant la redirection
             console.log('[CREATE] Rafraîchissement forcé de la liste des salons...')
             await loungeStore.fetchLounges(true)
-            
+
             alert(
               'Le salon a été créé avec succès (méthode alternative)! Vous allez être redirigé vers la liste des salons.',
             )
@@ -950,6 +937,18 @@ const forceAdminRole = () => {
   // Afficher un message de confirmation
   alert("Rôle administrateur forcé avec succès! Rafraîchissez l'authentification pour voir les changements.")
 }
+
+// Initialisation
+onMounted(async () => {
+  try {
+    console.log('[CREATE] Initialisation du composant de création de salon')
+
+    // Initialiser le formulaire
+    initializeFormData()
+  } catch (error) {
+    console.error('[CREATE] Erreur lors du montage du composant:', error)
+  }
+})
 </script>
 
 <style scoped>

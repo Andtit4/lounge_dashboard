@@ -32,6 +32,24 @@ module.exports = {
     'vue/no-lone-template': 0,
     'vue/v-on-event-hyphenation': ['warn', 'never', { autofix: true }],
     'vue/component-name-in-template-casing': ['warn', 'PascalCase', { registeredComponentsOnly: false }],
-    'vue/script-indent': ['warn', 2], // , { baseIndent: 0 } - we should use that, but it didn't work for me for some reason.
+    'vue/script-indent': [
+      'error',
+      2,
+      {
+        baseIndent: 0,
+        switchCase: 1,
+        ignores: [],
+      },
+    ],
+    'vue/max-attributes-per-line': 'off',
+    '@typescript-eslint/no-unused-vars': 'warn',
   },
+  overrides: [
+    {
+      files: ['*.vue'],
+      rules: {
+        indent: 'off',
+      },
+    },
+  ],
 }
