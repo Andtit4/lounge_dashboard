@@ -5,10 +5,11 @@ module.exports = {
         cwd: '/root/lounge_dashboard/backend',
         instances: 1,
         autorestart: true,
-        watch: false,
+        watch: true,
+        ignore_watch: ["node_modules", "uploads", "dist", ".git"],
         max_memory_restart: '1G',
         env: {
-            NODE_ENV: 'production',
+            NODE_ENV: 'development',
             PORT: 6610,
             DB_HOST: '193.203.166.156',
             DB_PORT: 3306,
@@ -31,9 +32,8 @@ module.exports = {
             'pre-deploy-local': '',
             'post-deploy': 'cd backend && ' +
                 'npm install && ' +
-                'npm run build && ' +
                 'chmod +x start-backend.sh && ' +
-                'pm2 reload ecosystem.config.js --env production',
+                'pm2 reload ecosystem.config.js',
             'pre-setup': '',
             ssh_options: ['ForwardAgent=yes'],
         },

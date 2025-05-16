@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script pour construire et démarrer le backend NestJS
+# Script pour démarrer le backend NestJS en mode développement
 cd "$(dirname "$0")"
 echo "Répertoire courant: $(pwd)"
 
@@ -10,16 +10,6 @@ if [ ! -d "node_modules" ]; then
   npm install
 fi
 
-# Construction du projet
-echo "Construction du backend..."
-npm run build
-
-# Vérification que le build a bien fonctionné
-if [ ! -f "dist/main.js" ]; then
-  echo "ERREUR: Le fichier dist/main.js n'a pas été créé. Échec de la construction."
-  exit 1
-fi
-
-# Démarrage du serveur
-echo "Démarrage du serveur backend sur le port 6610..."
-NODE_ENV=production npm run start:prod 
+# Démarrage du serveur en mode développement (watch mode)
+echo "Démarrage du serveur backend en mode développement sur le port 6610..."
+npm run start:dev 

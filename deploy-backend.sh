@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Script de déploiement pour l'API Lounge Dashboard
-echo "Déploiement de l'API Lounge Dashboard"
+# Script de déploiement pour l'API Lounge Dashboard (mode développement)
+echo "Déploiement de l'API Lounge Dashboard en mode développement"
 
 # Vérifier si PM2 est installé
 if ! command -v pm2 &> /dev/null
