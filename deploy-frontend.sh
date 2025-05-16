@@ -1,20 +1,13 @@
 #!/bin/bash
 
 # Script de déploiement pour le frontend Lounge Dashboard
-echo "Déploiement du Frontend Lounge Dashboard"
+echo "Déploiement du Frontend Lounge Dashboard (mode développement)"
 
 # Vérifier si PM2 est installé
 if ! command -v pm2 &> /dev/null
 then
     echo "Installation de PM2..."
     npm install -g pm2
-fi
-
-# Vérifier si serve est installé
-if ! command -v serve &> /dev/null
-then
-    echo "Installation de serve..."
-    npm install -g serve
 fi
 
 # Configuration SSH

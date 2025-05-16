@@ -12,7 +12,7 @@ Ce guide vous explique comment déployer séparément le frontend et l'API de Lo
 
 ## Configuration du déploiement
 
-### Frontend
+### Frontend (Mode Développement)
 
 1. **Préparation du fichier ecosystem.config.js**
 
@@ -77,11 +77,13 @@ Ce guide vous explique comment déployer séparément le frontend et l'API de Lo
    ```
 
    Ce script va:
-   - Installer PM2 et serve si nécessaire
+   - Installer PM2 si nécessaire
    - Configurer les clés SSH
    - Préparer le déploiement avec vos informations
    - Déployer le frontend avec PM2 deploy
    - Configurer le démarrage automatique du service
+
+   Note: Le frontend sera déployé en mode développement avec `npm run dev`
 
 ### Déploiement du Backend (API)
 
@@ -118,7 +120,7 @@ Le déploiement aura la structure suivante sur le VPS:
 ```
 /var/www/lounge-frontend/
 ├── current/            # Version actuelle du frontend
-│   ├── dist/           # Build du frontend
+│   ├── src/            # Code source du frontend
 │   └── ...
 ├── shared/             # Fichiers partagés
 └── source/             # Code source cloné

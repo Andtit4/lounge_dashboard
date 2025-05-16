@@ -10,6 +10,10 @@ export default defineConfig({
   build: {
     sourcemap: true,
   },
+  server: {
+    port: 6611,
+    host: '0.0.0.0', // Écouter sur toutes les interfaces réseau pour être accessible depuis l'extérieur
+  },
   plugins: [
     vuestic({
       devtools: true,

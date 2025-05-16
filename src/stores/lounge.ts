@@ -28,17 +28,13 @@ export const useLoungeStore = defineStore('lounge', () => {
       console.log('[LOUNGE-STORE] Récupération de la liste des salons', forceRefresh ? '(forcée)' : '')
 
       // Configuration pour forcer une requête fraîche et contourner le cache si nécessaire
-      const config = forceRefresh
-        ? {
-            headers: {
-              'Cache-Control': 'no-cache',
-              Pragma: 'no-cache',
-              Expires: '0',
-            },
-          }
-        : undefined
+      let url = api.lounges()
+      if (forceRefresh) {
+        // Ajouter un paramètre d'URL pour contourner le cache
+        url = `${url}${url.includes('?') ? '&' : '?'}noCache=${Date.now()}`
+      }
 
-      const response = await httpService.get<Lounge[]>(api.lounges(), config)
+      const response = await httpService.get<Lounge[]>(url)
 
       if (response.data) {
         console.log('[LOUNGE-STORE] Salons récupérés avec succès:', response.data.length)

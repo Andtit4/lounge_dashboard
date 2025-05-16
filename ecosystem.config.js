@@ -1,17 +1,18 @@
 module.exports = {
     apps: [{
         name: 'lounge-frontend',
-        script: 'serve',
-        args: '-s dist -l 6611',
+        script: 'npm',
+        args: 'run dev',
         cwd: './',
         instances: 1,
         autorestart: true,
         watch: false,
         max_memory_restart: '1G',
         env: {
-            NODE_ENV: 'production',
-            PM2_SERVE_SPA: 'true',
-            PM2_SERVE_HOMEPAGE: '/index.html'
+            NODE_ENV: 'development',
+            PORT: 6611,
+            // Forcer Vite à utiliser le port 6611
+            VITE_PORT: 6611
         },
     }],
 
@@ -24,7 +25,6 @@ module.exports = {
             path: '/var/www/lounge-frontend',
             'pre-deploy-local': '',
             'post-deploy': 'npm install && ' +
-                'npm run build && ' +
                 'pm2 reload ecosystem.config.js --env production',
             'pre-setup': '',
             ssh_options: ['ForwardAgent=yes'],
