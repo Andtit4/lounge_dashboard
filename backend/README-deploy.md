@@ -19,6 +19,9 @@ Ce guide explique comment déployer simplement le backend sur votre VPS avec PM2
    ```bash
    cd /var/www/api
    npm install
+   
+   # Si crypto-browserify n'est pas déjà installé
+   npm install crypto-browserify
    ```
 
 3. **Créer le dossier uploads**
@@ -61,6 +64,18 @@ Ce guide explique comment déployer simplement le backend sur votre VPS avec PM2
    pm2 startup
    pm2 save
    ```
+
+## Résolution du problème "crypto is not defined"
+
+Le fichier `polyfill.js` inclus résout l'erreur `ReferenceError: crypto is not defined` qui peut se produire avec NestJS et TypeORM. Ce problème est corrigé en :
+
+1. Utilisant `crypto-browserify` comme polyfill pour le module `crypto`
+2. Chargeant ce polyfill avant le démarrage de l'application avec `-r ./polyfill.js`
+
+Si vous rencontrez toujours ce problème, assurez-vous que :
+- `crypto-browserify` est installé (`npm install crypto-browserify`)
+- Le fichier `polyfill.js` existe à la racine du projet
+- L'application est démarrée avec l'argument `-r ./polyfill.js` (déjà configuré dans ecosystem.config.js)
 
 ## Configuration
 

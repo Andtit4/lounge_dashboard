@@ -5,6 +5,7 @@ module.exports = {
             instances: 1,
             autorestart: true,
             watch: false,
+            node_args: "-r ./polyfill.js",
             max_memory_restart: '1G',
             env: {
                 NODE_ENV: 'production',
@@ -21,8 +22,8 @@ module.exports = {
         },
         {
             name: 'lounge-api-dev',
-            script: 'npm',
-            args: 'run start:dev',
+            script: 'node',
+            args: "-r ./polyfill.js ./node_modules/.bin/nest start --watch",
             instances: 1,
             autorestart: true,
             watch: true,
