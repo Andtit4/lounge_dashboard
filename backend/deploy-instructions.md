@@ -1,6 +1,13 @@
 # Déployer l'API NestJS avec PM2
 
-Ce document explique comment déployer l'API NestJS (backend) en utilisant le fichier ecosystem.config.js.
+Ce document explique comment déployer l'API NestJS (backend) en résolvant le problème de crypto.
+
+## Solution à l'erreur "crypto is not defined"
+
+Nous utilisons une approche plus robuste pour résoudre l'erreur `ReferenceError: crypto is not defined` avec deux fichiers spéciaux :
+
+1. **node-crypto.js** : Fournit un polyfill global pour l'objet crypto.
+2. **start-patched.js** : Script qui charge d'abord le polyfill puis démarre l'application.
 
 ## Sur votre machine de développement
 
@@ -23,7 +30,8 @@ Ce document explique comment déployer l'API NestJS (backend) en utilisant le fi
    Transférez les fichiers suivants sur votre VPS (par exemple dans `/var/www/api`):
    - Dossier `dist/` (le build compilé)
    - Fichier `ecosystem.config.js`
-   - Fichier `polyfill.js`
+   - Fichier `node-crypto.js`
+   - Fichier `start-patched.js`
    - Fichier `package.json`
    - Fichier `package-lock.json` (ou `yarn.lock`)
 
@@ -44,7 +52,18 @@ Ce document explique comment déployer l'API NestJS (backend) en utilisant le fi
    chmod 755 uploads
    ```
 
-4. **Démarrer avec PM2**
+4. **Test rapide (facultatif mais recommandé)**
+   
+   Avant de configurer PM2, vous pouvez tester directement le démarrage:
+   ```bash
+   chmod +x direct-start.sh
+   ./direct-start.sh
+   ```
+
+   Si l'application démarre sans erreurs, vous pouvez passer à l'étape suivante.
+   Arrêtez-la avec Ctrl+C.
+
+5. **Démarrer avec PM2**
 
    ```bash
    # Installer PM2 si ce n'est pas déjà fait
@@ -78,8 +97,21 @@ pm2 logs lounge-api
 - **Arrêter**: `pm2 stop lounge-api`
 - **Supprimer de PM2**: `pm2 delete lounge-api`
 
-## Résolution des problèmes
+## Dépannage supplémentaire
 
-Si vous rencontrez l'erreur `crypto is not defined`:
-- Vérifiez que le fichier `polyfill.js` est présent dans le répertoire de déploiement
-- Assurez-vous que `crypto-browserify` est installé: `npm install crypto-browserify` 
+Si vous rencontrez encore des problèmes :
+
+1. **Vérifiez les logs complets**
+   ```bash
+   pm2 logs lounge-api --lines 100
+   ```
+
+2. **Testez le polyfill séparément**
+   ```bash
+   node -e "require('./node-crypto'); console.log(global.crypto.randomUUID());"
+   ```
+
+3. **Assurez-vous que node.js est à jour**
+   ```bash
+   node --version  # Doit être 18.x ou supérieur
+   ``` 

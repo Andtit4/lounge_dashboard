@@ -1,8 +1,7 @@
 module.exports = {
     apps: [{
         name: 'lounge-api',
-        script: 'dist/main.js',
-        node_args: "-r ./polyfill.js",
+        script: 'start-patched.js',
         instances: 1,
         autorestart: true,
         watch: false,
