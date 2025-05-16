@@ -17,6 +17,7 @@ module.exports = {
             JWT_SECRET: 'changeThis-WithSecureSecret',
             UPLOADS_DIR: './uploads',
             API_BASE_URL: 'https://185-97-146-99.nip.io',
+            CORS_ORIGIN: 'http://185.97.146.99:6611,https://185.97.146.99:6611,http://185-97-146-99.nip.io:6611',
         },
     }],
 
