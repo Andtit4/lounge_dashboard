@@ -1,15 +1,16 @@
 module.exports = {
     apps: [{
         name: 'lounge-frontend',
-        script: 'npx',
-        args: 'vite --port 6611 --host',
+        script: 'node',
+        args: './start-dev.js',
         cwd: './',
         instances: 1,
         autorestart: true,
         watch: false,
         max_memory_restart: '1G',
         env: {
-            NODE_ENV: 'development'
+            NODE_ENV: 'production',
+            PORT: 6611
         },
     }],
 
@@ -22,6 +23,8 @@ module.exports = {
             path: '/var/www/lounge-frontend',
             'pre-deploy-local': '',
             'post-deploy': 'npm install && ' +
+                'npm run build && ' +
+                'npm install express && ' +
                 'pm2 reload ecosystem.config.js --env production',
             'pre-setup': '',
             ssh_options: ['ForwardAgent=yes'],
