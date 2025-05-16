@@ -8,8 +8,9 @@ module.exports = {
         watch: false,
         max_memory_restart: '1G',
         env: {
-            NODE_ENV: 'development',
-            PORT: 6611
+            NODE_ENV: 'production',
+            PORT: 6611,
+            API_URL: 'https://185-97-146-99.nip.io'
         },
     }],
 
@@ -22,7 +23,7 @@ module.exports = {
             path: '/var/www/lounge-frontend',
             'pre-deploy-local': '',
             'post-deploy': 'npm install && ' +
-                'npm install vite && ' +
+                'npm run build && ' +
                 'chmod +x run-frontend.sh && ' +
                 'pm2 reload ecosystem.config.js --env production',
             'pre-setup': '',
