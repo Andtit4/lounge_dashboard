@@ -1,7 +1,8 @@
 module.exports = {
     apps: [{
         name: 'lounge-api',
-        script: 'dist/main.js',
+        script: './start-backend.sh',
+        cwd: '/root/lounge_dashboard/backend',
         instances: 1,
         autorestart: true,
         watch: false,
@@ -31,6 +32,7 @@ module.exports = {
             'post-deploy': 'cd backend && ' +
                 'npm install && ' +
                 'npm run build && ' +
+                'chmod +x start-backend.sh && ' +
                 'pm2 reload ecosystem.config.js --env production',
             'pre-setup': '',
             ssh_options: ['ForwardAgent=yes'],
