@@ -1,15 +1,14 @@
 module.exports = {
     apps: [{
         name: 'lounge-api',
-        script: './start-backend.sh',
-        cwd: '/root/lounge_dashboard/backend',
+        script: 'dist/main.js',
+        node_args: "-r ./polyfill.js",
         instances: 1,
         autorestart: true,
-        watch: true,
-        ignore_watch: ["node_modules", "uploads", "dist", ".git"],
+        watch: false,
         max_memory_restart: '1G',
         env: {
-            NODE_ENV: 'development',
+            NODE_ENV: 'production',
             PORT: 6610,
             DB_HOST: '193.203.166.156',
             DB_PORT: 3306,
