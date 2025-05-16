@@ -1,18 +1,15 @@
 module.exports = {
     apps: [{
         name: 'lounge-frontend',
-        script: 'npm',
-        args: 'run dev',
+        script: 'npx',
+        args: 'vite --port 6611 --host',
         cwd: './',
         instances: 1,
         autorestart: true,
         watch: false,
         max_memory_restart: '1G',
         env: {
-            NODE_ENV: 'development',
-            PORT: 6611,
-            // Forcer Vite à utiliser le port 6611
-            VITE_PORT: 6611
+            NODE_ENV: 'development'
         },
     }],
 
