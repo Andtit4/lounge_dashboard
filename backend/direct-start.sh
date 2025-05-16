@@ -15,6 +15,7 @@ export DB_DATABASE=u527740812_lounge_db
 export JWT_SECRET="changeThis-WithSecureSecret"
 export UPLOADS_DIR="./uploads"
 export API_BASE_URL="https://185-97-146-99.nip.io"
+export CORS_ORIGIN="http://185.97.146.99:6611,https://185.97.146.99:6611,http://185-97-146-99.nip.io:6611"
 
 # Lancer l'application via notre script patché
 node start-patched.js 

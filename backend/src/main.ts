@@ -4,15 +4,21 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Obtenir les origines autorisées depuis les variables d'environnement ou utiliser des valeurs par défaut
+  const corsOrigins = process.env.CORS_ORIGIN 
+    ? process.env.CORS_ORIGIN.split(',')
+    : ['http://localhost:5173', 'http://localhost:4173'];
+
+  // Ajouter les origines de développement en mode dev
+  if (process.env.NODE_ENV !== 'production') {
+    corsOrigins.push('http://localhost:5173', 'http://localhost:4173');
+  }
+
+  console.log('CORS origins configured:', corsOrigins);
+
   // Activer CORS pour permettre les requêtes depuis le frontend
   app.enableCors({
-    origin: [
-      'http://localhost:5173', 
-      'http://localhost:4173', 
-      'http://185.97.146.99:6611',
-      'https://185.97.146.99:6611',
-      'http://185-97-146-99.nip.io:6611'
-    ],
+    origin: corsOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     credentials: true,
   });
