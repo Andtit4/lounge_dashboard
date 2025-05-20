@@ -5,13 +5,28 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Obtenir les origines autorisées depuis les variables d'environnement ou utiliser des valeurs par défaut
-  const corsOrigins = process.env.CORS_ORIGIN 
-    ? process.env.CORS_ORIGIN.split(',')
-    : ['http://localhost:5173', 'http://localhost:4173', 'http://localhost:6611'];
+  // Vérifier à la fois CORS_ORIGIN et CORS_ORIGINS pour compatibilité
+  const corsOriginsEnv = process.env.CORS_ORIGIN || process.env.CORS_ORIGINS;
+  const corsOrigins = corsOriginsEnv
+    ? corsOriginsEnv.split(',')
+    : [
+        'http://localhost:5173',
+        'http://localhost:4173',
+        'http://localhost:6611',
+      ];
 
   // Ajouter les origines de développement en mode dev
   if (process.env.NODE_ENV !== 'production') {
-    corsOrigins.push('http://localhost:5173', 'http://localhost:4173', 'http://localhost:6611');
+    corsOrigins.push(
+      'http://localhost:5173',
+      'http://localhost:4173',
+      'http://localhost:6611',
+    );
+  }
+
+  // Ajouter explicitement l'URL du client actuel
+  if (!corsOrigins.includes('http://localhost:6611')) {
+    corsOrigins.push('http://localhost:6611');
   }
 
   console.log('CORS origins configured:', corsOrigins);

@@ -13,6 +13,22 @@ export default defineConfig({
   server: {
     port: 6611,
     host: '0.0.0.0', // Écouter sur toutes les interfaces réseau pour être accessible depuis l'extérieur
+    proxy: {
+      // Configuration du proxy pour éviter les problèmes CORS avec l'API
+      '/api': {
+        target: 'http://185.97.146.99:6610',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+        configure: (proxy, _options) => {
+          proxy.on('error', (err, _req, _res) => {
+            console.log('Erreur de proxy:', err);
+          });
+          proxy.on('proxyReq', (proxyReq, req, _res) => {
+            console.log('Proxying:', req.method, req.url, '→', proxyReq.path);
+          });
+        }
+      }
+    }
   },
   plugins: [
     vuestic({

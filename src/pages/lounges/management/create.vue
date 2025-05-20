@@ -559,7 +559,7 @@ const uploadImage = async (loungeId: string): Promise<string | null> => {
 
     // Corriger l'URL si elle est relative
     if (!imageUrl.startsWith('http')) {
-      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://185.97.146.99:6610'
+      const apiBaseUrl = '/api'
 
       if (imageUrl.startsWith('/')) {
         imageUrl = `${apiBaseUrl}${imageUrl}`
@@ -659,7 +659,7 @@ const createTestLounge = async (): Promise<boolean> => {
     }
 
     // Faire une requête directe au backend
-    const directResponse = await fetch('http://185.97.146.99:6610/lounges', {
+    const directResponse = await fetch('/api/lounges', {
       method: 'POST',
       headers,
       body: JSON.stringify(preparedData),
@@ -768,7 +768,7 @@ const submitForm = async () => {
     // Créer le salon directement avec fetch pour contourner d'éventuels problèmes avec le store
     try {
       console.log('[CREATE] Tentative directe avec fetch')
-      const directResponse = await fetch('http://185.97.146.99:6610/lounges', {
+      const directResponse = await fetch('/api/lounges', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

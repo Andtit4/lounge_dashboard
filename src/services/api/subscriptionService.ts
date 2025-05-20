@@ -1,8 +1,8 @@
 import axios from 'axios'
 import type { AxiosResponse } from 'axios'
 
-// URL de base de l'API backend
-const API_URL = 'http://185.97.146.99:6610'
+// URL de base de l'API backend - Utilisation du proxy Vite pour éviter les problèmes CORS
+const API_URL = '/api'
 
 // Configuration d'Axios
 const apiClient = axios.create({
