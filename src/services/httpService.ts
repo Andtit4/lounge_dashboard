@@ -8,7 +8,8 @@ interface HttpResponse<T> {
   statusCode?: number
 }
 
-// Fonction commune pour récupérer le token d'authentification
+// Fonction commune pour récupérer le token d'authentification directement du storage
+// pour éviter les problèmes liés à l'utilisation du store en dehors du contexte de Vue
 const getAuthToken = (): string | null => {
   const token = localStorage.getItem('token') || sessionStorage.getItem('token')
   console.log(`[HTTP] Getting auth token: ${token ? 'Token present' : 'No token found'}`)
@@ -16,6 +17,20 @@ const getAuthToken = (): string | null => {
     console.log(`[HTTP] Token preview: ${token.substring(0, 15)}...`)
   }
   return token
+}
+
+// Vérifier si l'utilisateur est admin directement depuis le storage
+const isUserAdmin = (): boolean => {
+  const userJson = localStorage.getItem('user') || sessionStorage.getItem('user')
+  if (!userJson) return false
+  
+  try {
+    const user = JSON.parse(userJson)
+    return user.isAdmin === true || user.role === 'admin'
+  } catch (e) {
+    console.error('[HTTP] Erreur lors de la lecture des données utilisateur:', e)
+    return false
+  }
 }
 
 // Fonction pour formater correctement le token d'authentification
@@ -36,25 +51,17 @@ const axiosInstance = axios.create({
 // Ajouter un intercepteur pour toutes les requêtes axios
 axiosInstance.interceptors.request.use(
   (config) => {
-    // Récupérer le token d'authentification
-    const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+    // Récupérer le token d'authentification directement
+    const token = getAuthToken()
     if (token) {
       config.headers.Authorization = formatAuthHeader(token)
     }
 
-    // Vérifier si l'utilisateur est admin
-    const userJson = localStorage.getItem('user') || sessionStorage.getItem('user')
-    if (userJson) {
-      try {
-        const user = JSON.parse(userJson)
-        if (user.isAdmin === true || user.role === 'admin') {
-          // Ajouter le header X-Admin-Role
-          config.headers['X-Admin-Role'] = 'true'
-          console.log('[AXIOS] Ajout du header X-Admin-Role pour confirmation des droits admin')
-        }
-      } catch (e) {
-        console.error('[AXIOS] Erreur lors de la lecture des données utilisateur:', e)
-      }
+    // Vérifier si l'utilisateur est admin directement
+    if (isUserAdmin()) {
+      // Ajouter le header X-Admin-Role
+      config.headers['X-Admin-Role'] = 'true'
+      console.log('[AXIOS] Ajout du header X-Admin-Role pour confirmation des droits admin')
     }
 
     return config
@@ -167,8 +174,8 @@ export default {
         headers['Authorization'] = formatAuthHeader(token)
         console.log(`[HTTP] Using token for POST: ${token.substring(0, 15)}...`)
 
-        // DEBUG: Forcer l'envoi d'un header supplémentaire pour le rôle admin
-        if (url.includes('/lounges')) {
+        // Vérifier si l'utilisateur est admin
+        if (url.includes('/lounges') && isUserAdmin()) {
           headers['X-Admin-Role'] = 'true'
           console.log('[HTTP] Ajout du header X-Admin-Role pour confirmer les droits admin')
         }

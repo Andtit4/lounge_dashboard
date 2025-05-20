@@ -9,6 +9,7 @@ import { BookingsModule } from './bookings/bookings.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { AuthModule } from './auth/auth.module';
 import { UploadsModule } from './uploads/uploads.module';
+import { EmailModule } from './email/email.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 
@@ -44,6 +45,7 @@ import { join } from 'path';
     SubscriptionsModule,
     AuthModule,
     UploadsModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

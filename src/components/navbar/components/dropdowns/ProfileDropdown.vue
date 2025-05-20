@@ -72,61 +72,100 @@ const handleLogout = () => {
 }
 
 // Définir les options du menu séparément de defineProps
-const menuItems: MenuItem[] = [
-  {
-    name: 'account',
-    separator: true,
-    list: [
+const menuItems = computed(() => {
+  // Vérifier si l'utilisateur est administrateur
+  const isAdmin = authStore.isAdmin
+  
+  // Menu pour les administrateurs (accès complet)
+  if (isAdmin) {
+    return [
       {
-        name: 'profile',
-        to: 'preferences',
-        icon: 'mso-account_circle',
+        name: 'account',
+        separator: true,
+        list: [
+          {
+            name: 'profile',
+            to: 'profile',
+            icon: 'mso-account_circle',
+          },
+          {
+            name: 'settings',
+            to: 'settings',
+            icon: 'mso-settings',
+          },
+          {
+            name: 'billing',
+            to: 'billing',
+            icon: 'mso-receipt_long',
+          },
+          {
+            name: 'projects',
+            to: 'projects',
+            icon: 'mso-favorite',
+          },
+        ],
       },
       {
-        name: 'settings',
-        to: 'settings',
-        icon: 'mso-settings',
+        name: 'explore',
+        separator: true,
+        list: [
+          {
+            name: 'faq',
+            to: 'faq',
+            icon: 'mso-quiz',
+          },
+          {
+            name: 'helpAndSupport',
+            href: 'https://discord.gg/u7fQdqQt8c',
+            icon: 'mso-error',
+          },
+        ],
       },
       {
-        name: 'billing',
-        to: 'billing',
-        icon: 'mso-receipt_long',
+        name: '',
+        separator: false,
+        list: [
+          {
+            name: 'logout',
+            icon: 'mso-logout',
+            itemKey: 'logout',
+          },
+        ],
       },
-      {
-        name: 'projects',
-        to: 'projects',
-        icon: 'mso-favorite',
-      },
-    ],
-  },
-  {
-    name: 'explore',
-    separator: true,
-    list: [
-      {
-        name: 'faq',
-        to: 'faq',
-        icon: 'mso-quiz',
-      },
-      {
-        name: 'helpAndSupport',
-        href: 'https://discord.gg/u7fQdqQt8c',
-        icon: 'mso-error',
-      },
-    ],
-  },
-  {
-    name: '',
-    separator: false,
-    list: [
-      {
-        name: 'logout',
-        icon: 'mso-logout',
-        itemKey: 'logout',
-      },
-    ],
-  },
-]
+    ]
+  }
+  
+  // Menu simplifié pour les utilisateurs normaux
+  return [
+    {
+      name: 'account',
+      separator: true,
+      list: [
+        {
+          name: 'profile',
+          to: 'profile',
+          icon: 'mso-account_circle',
+        },
+        {
+          name: 'pricing',
+          to: 'pricing-plans',
+          icon: 'mso-monetization_on',
+        },
+      ],
+    },
+    {
+      name: '',
+      separator: false,
+      list: [
+        {
+          name: 'logout',
+          icon: 'mso-logout',
+          itemKey: 'logout',
+        },
+      ],
+    },
+  ]
+})
 
 const isShown = ref(false)
 

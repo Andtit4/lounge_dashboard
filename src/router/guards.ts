@@ -1,15 +1,12 @@
 import { RouteLocationNormalized, NavigationGuardNext } from 'vue-router'
-// import { AuthService } from '../services/api/authService'
-// import { useAuthStore } from '../stores/auth'
+import { useAuthStore } from '../stores/auth'
 
 // Garde pour routes qui nécessitent une authentification
 export function requireAuth(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
-  // Vérifier l'authentification à partir du localStorage ET du sessionStorage
-  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
-  const userJson = localStorage.getItem('user') || sessionStorage.getItem('user')
-  const isAuthenticated = !!(token && userJson)
-
-  if (isAuthenticated) {
+  const authStore = useAuthStore()
+  authStore.refreshAuth()
+  
+  if (authStore.isAuthenticated) {
     next()
   } else {
     next({
@@ -21,27 +18,11 @@ export function requireAuth(to: RouteLocationNormalized, from: RouteLocationNorm
 
 // Garde pour routes qui nécessitent un rôle admin
 export function requireAdmin(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
-  // Vérifier l'authentification à partir du localStorage ET du sessionStorage
-  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
-  const userJson = localStorage.getItem('user') || sessionStorage.getItem('user')
-  const isAuthenticated = !!(token && userJson)
-
-  if (isAuthenticated) {
-    let isAdmin = false
-    let userRole = 'user'
-
-    if (userJson) {
-      try {
-        const user = JSON.parse(userJson)
-        isAdmin = user.isAdmin === true
-        userRole = user.role || 'user'
-      } catch (e) {
-        console.error('Erreur lors de la lecture des données user:', e)
-      }
-    }
-
-    // Vérifier à la fois le flag isAdmin et le champ role
-    if (isAdmin || userRole === 'admin') {
+  const authStore = useAuthStore()
+  authStore.refreshAuth()
+  
+  if (authStore.isAuthenticated) {
+    if (authStore.isAdmin) {
       next()
     } else {
       next({ name: 'lounges' }) // Redirection vers la page principale pour les non-admins
@@ -60,25 +41,11 @@ export function requireSubscription(
   from: RouteLocationNormalized,
   next: NavigationGuardNext,
 ) {
-  // Vérifier l'authentification à partir du localStorage ET du sessionStorage
-  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
-  const userJson = localStorage.getItem('user') || sessionStorage.getItem('user')
-  const isAuthenticated = !!(token && userJson)
-
-  if (isAuthenticated) {
-    let hasActiveSubscription = false
-
-    if (userJson) {
-      try {
-        const user = JSON.parse(userJson)
-        hasActiveSubscription =
-          !!user.subscriptionType && !!user.subscriptionExpiryDate && new Date(user.subscriptionExpiryDate) > new Date()
-      } catch (e) {
-        console.error('Erreur lors de la lecture des données user:', e)
-      }
-    }
-
-    if (hasActiveSubscription) {
+  const authStore = useAuthStore()
+  authStore.refreshAuth()
+  
+  if (authStore.isAuthenticated) {
+    if (authStore.hasActiveSubscription) {
       next()
     } else {
       next({ name: 'pricing-plans' }) // Redirection vers la page des plans d'abonnement
@@ -98,12 +65,10 @@ export function redirectIfAuthenticated(
   from: RouteLocationNormalized,
   next: NavigationGuardNext,
 ) {
-  // Vérifier l'authentification à partir du localStorage ET du sessionStorage
-  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
-  const userJson = localStorage.getItem('user') || sessionStorage.getItem('user')
-  const isAuthenticated = !!(token && userJson)
-
-  if (isAuthenticated) {
+  const authStore = useAuthStore()
+  authStore.refreshAuth()
+  
+  if (authStore.isAuthenticated) {
     next({ name: 'lounges' })
   } else {
     next()
@@ -112,60 +77,40 @@ export function redirectIfAuthenticated(
 
 // Garde pour limiter les utilisateurs normaux aux pages essentielles
 export function userOnlyAccess(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
-  // Vérifier l'authentification à partir du localStorage ET du sessionStorage
-  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
-  const userJson = localStorage.getItem('user') || sessionStorage.getItem('user')
-  const isAuthenticated = !!(token && userJson)
-
-  if (isAuthenticated) {
-    let isAdmin = false
-    let userRole = 'user'
-
-    if (userJson) {
-      try {
-        const user = JSON.parse(userJson)
-        isAdmin = user.isAdmin === true
-        userRole = user.role || 'user'
-      } catch (e) {
-        console.error('Erreur lors de la lecture des données user:', e)
-      }
-    }
-
-    // Les administrateurs ont accès à tout
-    // Vérifier à la fois la propriété isAdmin et le champ role
-    if (isAdmin || userRole === 'admin') {
-      next()
-      return
-    }
-
-    // Pages autorisées pour les utilisateurs normaux
-    const allowedRoutes = [
-      'lounges',
-      'lounges-detail',
-      'bookings',
-      'bookings-detail',
-      'bookings-create',
-      'subscriptions',
-      'subscriptions-detail',
-      'subscription-history',
-      'profile',
-      'payment-methods',
-      'billing',
-      'faq',
-      'preferences',
-      'settings',
-    ]
-
-    if (allowedRoutes.includes(to.name as string)) {
-      next()
-    } else {
-      // Rediriger vers la liste des salons si l'utilisateur tente d'accéder à une page non autorisée
-      next({ name: 'lounges' })
-    }
-  } else {
+  const authStore = useAuthStore()
+  authStore.refreshAuth()
+  
+  // Si l'utilisateur n'est pas authentifié, rediriger vers la page de connexion
+  if (!authStore.isAuthenticated) {
     next({
       name: 'login',
       query: { redirect: to.fullPath },
     })
+    return; // Ajouter un return pour empêcher les appels multiples à next()
+  }
+  
+  // Les administrateurs ont accès à tout
+  if (authStore.isAdmin) {
+    next()
+    return; // Ajouter un return pour empêcher les appels multiples à next()
+  }
+
+  // Pages autorisées pour les utilisateurs normaux - limité aux salons, réservations et pricing
+  const allowedRoutes = [
+    'lounges',
+    'lounges-detail',
+    'bookings',
+    'bookings-detail',
+    'bookings-create',
+    'pricing-plans',
+    'profile', // Gardé pour permettre à l'utilisateur de gérer son profil
+    'logout'
+  ]
+
+  if (allowedRoutes.includes(to.name as string)) {
+    next()
+  } else {
+    // Rediriger vers la liste des salons si l'utilisateur tente d'accéder à une page non autorisée
+    next({ name: 'lounges' })
   }
 }

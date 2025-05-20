@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '../stores/authStore'
+import { useAuthStore } from '../stores/auth'
 
 const props = defineProps<{
   loungeId: string
@@ -24,7 +24,7 @@ const props = defineProps<{
 const router = useRouter()
 const authStore = useAuthStore()
 
-const hasSubscription = computed(() => authStore.hasSubscription)
+const hasSubscription = computed(() => authStore.hasActiveSubscription)
 
 const goToBooking = () => {
   router.push({

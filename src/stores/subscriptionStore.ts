@@ -4,7 +4,7 @@ import {
   type ISubscription,
   // type ICreateSubscriptionDto,
 } from '../services/api/subscriptionService'
-import { useAuthStore } from './authStore'
+import { useAuthStore } from './auth'
 
 // État global
 const subscriptions = ref<ISubscription[]>([])
@@ -17,7 +17,7 @@ const authStore = useAuthStore()
 
 // Actions
 const fetchUserSubscriptions = async () => {
-  if (!authStore.user.value?.id) {
+  if (!authStore.currentUser?.id) {
     console.error('Impossible de récupérer les abonnements: utilisateur non connecté')
     return
   }
@@ -26,7 +26,7 @@ const fetchUserSubscriptions = async () => {
   error.value = null
 
   try {
-    const userId = authStore.user.value.id
+    const userId = authStore.currentUser.id
     const fetchedSubscriptions = await SubscriptionService.getUserSubscriptions(userId)
     subscriptions.value = fetchedSubscriptions
 
@@ -46,7 +46,7 @@ const fetchUserSubscriptions = async () => {
 }
 
 const subscribe = async (planType: string, durationMonths: number) => {
-  if (!authStore.user.value?.id) {
+  if (!authStore.currentUser?.id) {
     throw new Error('Utilisateur non connecté')
   }
 
@@ -54,7 +54,7 @@ const subscribe = async (planType: string, durationMonths: number) => {
   error.value = null
 
   try {
-    const userId = authStore.user.value.id
+    const userId = authStore.currentUser.id
     const newSubscription = await SubscriptionService.subscribe(userId, planType, durationMonths)
 
     // Mettre à jour la liste des abonnements
@@ -96,7 +96,7 @@ const cancelSubscription = async (subscriptionId: string) => {
 
 // Vérifier le statut d'abonnement
 const checkSubscriptionStatus = async () => {
-  if (!authStore.user.value?.id) {
+  if (!authStore.currentUser?.id) {
     return {
       hasActiveSubscription: false,
       subscriptionType: null,
@@ -108,7 +108,7 @@ const checkSubscriptionStatus = async () => {
   error.value = null
 
   try {
-    const userId = authStore.user.value.id
+    const userId = authStore.currentUser.id
     const status = await SubscriptionService.checkSubscriptionStatus(userId)
     return status
   } catch (err) {

@@ -1,32 +1,29 @@
 import { computed } from 'vue'
+import { useAuthStore } from '../stores/auth'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '../stores/authStore'
 
 export function useSubscriptionCheck() {
-  const router = useRouter()
   const authStore = useAuthStore()
+  const router = useRouter()
 
-  const hasSubscription = computed(() => authStore.hasSubscription)
-  const subscriptionType = computed(() => authStore.subscriptionType)
+  const hasSubscription = computed(() => authStore.hasActiveSubscription)
+  const subscriptionType = computed(() => authStore.currentUser?.subscriptionType || null)
 
-  // Vérifie si l'utilisateur a un abonnement actif
-  const checkSubscription = () => {
-    if (!authStore.isAuthenticated.value) {
-      router.push({ name: 'login' })
+  const requireSubscription = () => {
+    // Si l'utilisateur n'a pas d'abonnement actif, le rediriger vers la page d'abonnement
+    if (!authStore.hasActiveSubscription) {
+      router.push({
+        name: 'pricing-plans',
+        query: { message: 'Un abonnement actif est nécessaire pour accéder à cette fonctionnalité.' },
+      })
       return false
     }
-
-    if (!hasSubscription.value) {
-      router.push({ name: 'pricing-plans' })
-      return false
-    }
-
     return true
   }
 
   // Vérifie si l'utilisateur a un abonnement du type spécifié
   const checkSubscriptionType = (requiredType: string) => {
-    if (!checkSubscription()) {
+    if (!requireSubscription()) {
       return false
     }
 
@@ -55,7 +52,7 @@ export function useSubscriptionCheck() {
   return {
     hasSubscription,
     subscriptionType,
-    checkSubscription,
+    requireSubscription,
     checkSubscriptionType,
     goToSubscriptions,
   }

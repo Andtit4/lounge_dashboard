@@ -44,6 +44,7 @@ export default {
       displayName: 'menu.subscription-history',
       meta: {
         icon: 'history',
+        adminOnly: true,
       },
     },
     {
@@ -94,10 +95,17 @@ export default {
       },
     },
     {
-      name: 'preferences',
-      displayName: 'menu.preferences',
+      name: 'pricing-plans',
+      displayName: 'menu.pricing',
       meta: {
-        icon: 'manage_accounts',
+        icon: 'monetization_on',
+      },
+    },
+    {
+      name: 'profile',
+      displayName: 'menu.profile',
+      meta: {
+        icon: 'account_circle',
       },
     },
     {
@@ -105,6 +113,7 @@ export default {
       displayName: 'menu.settings',
       meta: {
         icon: 'settings',
+        adminOnly: true,
       },
     },
   ] as INavigationRoute[],

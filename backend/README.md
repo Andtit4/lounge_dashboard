@@ -96,3 +96,27 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+## Configuration du service d'email
+
+Pour activer l'envoi d'emails de notification lorsqu'un administrateur crée un compte utilisateur, vous devez configurer les paramètres d'email dans votre fichier `.env` :
+
+```
+EMAIL_USER=votre-email@gmail.com
+EMAIL_PASSWORD=votre-mot-de-passe-app
+EMAIL_FROM=support@lounge-africa.com
+FRONTEND_URL=http://url-de-votre-frontend.com
+```
+
+### Notes pour Gmail
+
+Si vous utilisez Gmail comme service SMTP :
+
+1. Vous devez utiliser un "mot de passe d'application" et non votre mot de passe normal
+2. Pour créer un mot de passe d'application:
+   - Activez l'authentification à deux facteurs sur votre compte Google
+   - Allez sur https://myaccount.google.com/apppasswords
+   - Créez un nouveau mot de passe d'application pour "Lounge Africa"
+   - Copiez le mot de passe généré et utilisez-le comme `EMAIL_PASSWORD`
+
+3. Assurez-vous que votre compte Gmail autorise l'accès aux applications moins sécurisées si vous rencontrez des problèmes de connexion.

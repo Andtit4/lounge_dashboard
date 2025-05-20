@@ -95,7 +95,7 @@
 import { ref, onMounted, computed, watch } from 'vue'
 import { useToast, useModal } from 'vuestic-ui'
 import { useRouter, useRoute } from 'vue-router'
-import { useAuthStore } from '../../stores/authStore'
+import { useAuthStore } from '../../stores/auth'
 import { useSubscriptionStore } from '../../stores/subscriptionStore'
 
 import { badgeStyles, selectButtonStyles } from './styles'
@@ -112,7 +112,7 @@ const authStore = useAuthStore()
 const subscriptionStore = useSubscriptionStore()
 
 const isAuthenticated = computed(() => authStore.isAuthenticated)
-const currentSubscriptionType = computed(() => authStore.subscriptionType)
+const currentSubscriptionType = computed(() => authStore.currentUser?.subscriptionType || null)
 // Variable locale pour stocker la valeur déballée du computed
 const userSubscriptionType = ref<string | null>(null)
 

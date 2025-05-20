@@ -1,5 +1,5 @@
 import { onMounted, ref } from 'vue'
-import { useAuthStore } from '../stores/authStore'
+import { useAuthStore } from '../stores/auth'
 
 export function useAppInit() {
   const authStore = useAuthStore()
@@ -16,8 +16,7 @@ export function useAppInit() {
       authStore.refreshAuth()
 
       // Vérifier si le token a expiré
-      const currentAuth = authStore.authState.value
-      if (currentAuth.token) {
+      if (authStore.token) {
         // Vous pourriez ajouter ici une logique pour vérifier la validité du token
         // ou récupérer des informations utilisateur mises à jour depuis le serveur
       }

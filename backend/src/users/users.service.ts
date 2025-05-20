@@ -2,18 +2,23 @@ import {
   Injectable,
   ConflictException,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
+import { EmailService } from '../email/email.service';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private emailService: EmailService
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -50,7 +55,27 @@ export class UsersService {
       user.subscriptionExpiryDate = subscriptionExpiryDate;
     }
 
-    return await this.usersRepository.save(user);
+    const newUser = await this.usersRepository.save(user);
+
+    // Envoyer un email de bienvenue
+    try {
+      const emailResult = await this.emailService.sendWelcomeEmail(
+        newUser.email,
+        newUser.firstName,
+        newUser.lastName
+      );
+      
+      if (emailResult) {
+        this.logger.log(`Email de bienvenue envoyé à ${newUser.email}`);
+      } else {
+        this.logger.warn(`Échec de l'envoi de l'email de bienvenue à ${newUser.email}`);
+      }
+    } catch (error) {
+      this.logger.error(`Erreur lors de l'envoi de l'email de bienvenue: ${error.message}`);
+      // Ne pas bloquer la création de l'utilisateur si l'envoi d'email échoue
+    }
+
+    return newUser;
   }
 
   async findAll(): Promise<User[]> {

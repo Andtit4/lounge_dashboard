@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import { requireAuth, requireAdmin, requireSubscription, redirectIfAuthenticated, userOnlyAccess } from './guards'
+import { useAuthStore } from '../stores/auth'
 
 import AuthLayout from '../layouts/AuthLayout.vue'
 import AppLayout from '../layouts/AppLayout.vue'
@@ -123,8 +124,28 @@ const routes: Array<RouteRecordRaw> = [
         path: 'bookings/create',
         component: () => import('../pages/bookings/create.vue'),
         beforeEnter: (to, from, next) => {
-          requireSubscription(to, from, next)
-          userOnlyAccess(to, from, next)
+          const authStore = useAuthStore();
+          authStore.refreshAuth();
+          
+          if (!authStore.isAuthenticated) {
+            next({
+              name: 'login',
+              query: { redirect: to.fullPath },
+            });
+            return;
+          }
+          
+          if (!authStore.isAdmin) {
+            if (!authStore.hasActiveSubscription) {
+              next({ name: 'pricing-plans' });
+              return;
+            }
+            
+            next();
+            return;
+          }
+          
+          next();
         },
       },
       {
@@ -197,6 +218,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'preferences',
         path: 'preferences',
         component: () => import('../pages/preferences/Preferences.vue'),
+        beforeEnter: requireAdmin,
       },
       {
         name: 'settings',
