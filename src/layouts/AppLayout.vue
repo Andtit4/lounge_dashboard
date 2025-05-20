@@ -3,6 +3,7 @@
     :top="{ fixed: true, order: 2 }"
     :left="{ fixed: true, absolute: breakpoints.mdDown, order: 1, overlay: breakpoints.mdDown && !isSidebarMinimized }"
     @leftOverlayClick="isSidebarMinimized = true"
+    class="app-layout"
   >
     <template #top>
       <AppNavbar :is-mobile="isMobile" />
@@ -18,10 +19,14 @@
           <VaButton class="px-4 py-4" icon="md_close" preset="plain" @click="onCloseSidebarButtonClick" />
         </div>
       </div>
-      <AppLayoutNavigation v-if="!isMobile" class="p-4" />
-      <main class="p-4 pt-0">
+      <AppLayoutNavigation v-if="!isMobile" class="p-4 breadcrumb-navigation" />
+      <main class="pt-0 main-content">
         <article>
-          <RouterView />
+          <RouterView v-slot="{ Component }">
+            <Transition name="fade" mode="out-in">
+              <component :is="Component" />
+            </Transition>
+          </RouterView>
         </article>
       </main>
     </template>
@@ -87,5 +92,36 @@ const onCloseSidebarButtonClick = () => {
 .va-sidebar {
   width: unset !important;
   min-width: unset !important;
+}
+
+.app-layout {
+  background-color: var(--va-background-primary);
+}
+
+.breadcrumb-navigation {
+  border-bottom: 1px solid var(--va-background-border);
+  background-color: var(--va-background-secondary);
+  margin-bottom: 1rem;
+}
+
+.main-content {
+  position: relative;
+  background-color: var(--va-background-primary);
+  min-height: calc(100vh - 64px - 56px); /* Navbar height + breadcrumb height */
+}
+
+.app-layout__sidebar-wrapper {
+  transition: margin-left 0.3s ease;
+}
+
+// Transitions
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

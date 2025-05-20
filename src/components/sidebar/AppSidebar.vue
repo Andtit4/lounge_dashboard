@@ -1,7 +1,13 @@
 <template>
-  <VaSidebar v-model="writableVisible" :width="sidebarWidth" :color="color" minimized-width="0">
+  <VaSidebar v-model="writableVisible" :width="sidebarWidth" :color="color" minimized-width="0" class="custom-sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-brand">
+        <VaIcon name="dashboard" size="24px" color="primary" />
+        <span class="sidebar-brand-text font-bold">Lounge Dashboard</span>
+      </div>
+    </div>
     <VaAccordion v-model="value" multiple>
-      <VaCollapse v-for="(route, index) in filteredRoutes" :key="index">
+      <VaCollapse v-for="(route, index) in filteredRoutes" :key="index" class="sidebar-collapse">
         <template #header="{ value: isCollapsed }">
           <VaSidebarItem
             :to="route.children ? undefined : { name: route.name }"
@@ -10,7 +16,8 @@
             :text-color="textColor(route)"
             :aria-label="`${route.children ? 'Open category ' : 'Visit'} ${t(route.displayName)}`"
             role="button"
-            hover-opacity="0.10"
+            hover-opacity="0.15"
+            class="custom-sidebar-item"
           >
             <VaSidebarItemContent class="py-3 pr-2 pl-4">
               <VaIcon
@@ -35,7 +42,8 @@
               :active-color="activeColor"
               :text-color="textColor(childRoute)"
               :aria-label="`Visit ${t(childRoute.displayName)}`"
-              hover-opacity="0.10"
+              hover-opacity="0.15"
+              class="custom-sidebar-subitem"
             >
               <VaSidebarItemContent class="py-3 pr-2 pl-11">
                 <VaSidebarItemTitle class="leading-5 font-semibold">
@@ -109,7 +117,7 @@ export default defineComponent({
 
     const sidebarWidth = computed(() => (props.mobile ? '100vw' : '280px'))
     const color = computed(() => getColor('background-secondary'))
-    const activeColor = computed(() => colorToRgba(getColor('focus'), 0.1))
+    const activeColor = computed(() => colorToRgba(getColor('primary'), 0.15))
 
     const iconColor = (route: INavigationRoute) => (routeHasActiveChild(route) ? 'primary' : 'secondary')
     const textColor = (route: INavigationRoute) => (routeHasActiveChild(route) ? 'primary' : 'textPrimary')
@@ -135,3 +143,56 @@ export default defineComponent({
   },
 })
 </script>
+
+<style lang="scss" scoped>
+// Prevent icon jump on animation
+.va-sidebar {
+  width: unset !important;
+  min-width: unset !important;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.07);
+}
+
+.custom-sidebar {
+  border-right: 1px solid var(--va-background-border);
+  
+  .sidebar-header {
+    padding: 1.5rem 1rem;
+    border-bottom: 1px solid var(--va-background-border);
+  }
+  
+  .sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    &-text {
+      color: var(--va-primary);
+      font-size: 1.125rem;
+    }
+  }
+  
+  .sidebar-collapse {
+    margin-bottom: 0.25rem;
+  }
+
+  .custom-sidebar-item {
+    transition: all 0.3s ease;
+    margin: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    
+    &:hover {
+      background-color: var(--va-background-element);
+    }
+  }
+  
+  .custom-sidebar-subitem {
+    transition: all 0.3s ease;
+    margin: 0.125rem 0.5rem 0.125rem 1.5rem;
+    border-radius: 0.5rem;
+    
+    &:hover {
+      background-color: var(--va-background-element);
+    }
+  }
+}
+</style>

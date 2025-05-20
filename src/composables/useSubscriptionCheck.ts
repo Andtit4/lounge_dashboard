@@ -30,7 +30,7 @@ export function useSubscriptionCheck() {
       return false
     }
 
-    const currentType = subscriptionType.value
+    /* const currentType = subscriptionType.value
     if (currentType === null || currentType !== requiredType) {
       router.push({
         name: 'pricing-plans',
@@ -40,7 +40,7 @@ export function useSubscriptionCheck() {
       })
       return false
     }
-
+ */
     return true
   }
 

@@ -25,68 +25,33 @@ pre {
 }
 
 .page-title {
-    font-size: 32px;
-    font-weight: bold;
-    line-height: 2.25rem;
-    margin-bottom: 1.5rem;
+    @apply text-[32px] md: text-5xl font-bold leading-9 md: leading-[56px] max-sm: mt-6 mb-6 md: mb-4;
     color: var(--va-primary);
-}
-
-@media (min-width: 768px) {
-    .page-title {
-        font-size: 3rem;
-        line-height: 3.5rem;
-        margin-bottom: 1rem;
-    }
 }
 
 .h1 {
-    font-size: 32px;
-    font-weight: bold;
-    line-height: 2.25rem;
-    margin-bottom: 1.5rem;
+    @apply text-[32px] md: text-5xl font-bold leading-9 md: leading-[56px] max-sm: mt-6 mb-6 md: mb-4;
     color: var(--va-primary);
-}
-
-@media (min-width: 768px) {
-    .h1 {
-        font-size: 3rem;
-        line-height: 3.5rem;
-        margin-bottom: 1rem;
-    }
 }
 
 .h3,
 .page-sub-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    line-height: 1.875rem;
+    @apply text-2xl font-bold leading-[30px];
     color: var(--va-secondary);
 }
 
 .h5 {
-    font-weight: bold;
-    line-height: 1.25;
+    @apply font-bold leading-tight;
 }
 
 .block-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
+    @apply text-2xl font-bold mb-2;
     color: var(--va-primary);
 }
 
 .pricing-plan-card-title {
-    font-size: 1.75rem;
-    font-weight: bold;
-    line-height: 2.5rem;
+    @apply text-[28px] md: text-[32px] leading-10 font-bold;
     color: var(--va-primary);
-}
-
-@media (min-width: 768px) {
-    .pricing-plan-card-title {
-        font-size: 2rem;
-    }
 }
 
 .text-regular-small {
